@@ -1,0 +1,16 @@
+# Claude Code context — local only, never push
+CLAUDE.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local dev
+node_modules/
+.env
