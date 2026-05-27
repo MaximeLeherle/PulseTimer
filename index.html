@@ -672,7 +672,6 @@
     color: var(--bg);
     border-color: var(--accent);
   }
-  .timer-footer button:hover { background: var(--panel-2); }
 
   /* Input screen */
   .input-card {
@@ -2059,6 +2058,9 @@ function startWorkPhase() {
   state.phaseTarget = target;
   state.tapCount = 0;
 
+  // Déclaré ici pour être disponible dans tout le reste de la fonction
+  const isSurprise = m === 'random' && state.options.randomSurprise;
+
   // Tap zone visibility
   const isFree = duration === 0;
   document.getElementById('tap-zone').style.display = isFree ? '' : 'none';
@@ -2080,7 +2082,6 @@ function startWorkPhase() {
   document.getElementById('big-time').className = 'big-time';
 
   // Affichage objectif
-  const isSurprise = m === 'random' && state.options.randomSurprise;
   const tgEl = document.getElementById('effort-target');
   if (isSurprise) {
     tgEl.innerHTML = `<strong>?</strong> REPS 🎲`;
