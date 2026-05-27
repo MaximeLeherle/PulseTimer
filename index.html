@@ -987,7 +987,7 @@
       <div class="today-bar-fill" id="today-bar-fill" style="width:0%"></div>
     </div>
     <div class="today-streak">
-      <span>Total : <strong id="total-all">0</strong> pompes</span>
+      <span>Total : <strong id="total-all">0</strong> reps</span>
       <span>Record : <strong id="record-day">0</strong> en 1 jour</span>
     </div>
   </div>
@@ -1020,7 +1020,7 @@
       <label>Durée (secondes)</label>
       <input type="number" id="sprint-duration" min="5" value="60">
     </div>
-    <p class="hint">Tu fais le maximum de pompes dans le temps imparti.</p>
+    <p class="hint">Tu fais le maximum de reps dans le temps imparti.</p>
     <div class="summary-box" id="summary-sprint"></div>
   </div>
 
@@ -1094,7 +1094,7 @@
       <input type="number" id="random-cap" min="0" value="0">
     </div>
     <div class="field">
-      <label>Total cible (0 = séries fixes) — ex : 253 pompes ce soir</label>
+      <label>Total cible (0 = séries fixes)</label>
       <input type="number" id="random-totalcap" min="0" value="0">
     </div>
     <div class="field">
@@ -1169,7 +1169,7 @@
   <div class="panel">
     <h2>Options générales</h2>
     <div class="field">
-      <label>Objectif quotidien (pompes)</label>
+      <label>Objectif quotidien (reps)</label>
       <input type="number" id="opt-daily-goal" min="0" value="100">
     </div>
     <div class="field">
@@ -2086,7 +2086,7 @@ function startWorkPhase() {
   setCircle(0, 'normal');
   buildSeriesTracker();
   sounds.go();
-  if (!isSurprise && m === 'random' && target > 0) speak(`${target} pompes`);
+  if (!isSurprise && m === 'random' && target > 0) speak(`${target} reps`);
   else if (target > 0) speak('Go');
   vibrate(50);
   tickLoop();
@@ -2477,7 +2477,7 @@ function finishSession() {
   const sub = document.getElementById('done-subtitle');
   if (goal > 0) {
     if (todayTotal >= goal) sub.innerHTML = `🎯 Objectif quotidien atteint ! (${todayTotal}/${goal})`;
-    else sub.innerHTML = `Plus que <strong style="color:var(--accent)">${goal - todayTotal}</strong> pompes pour ton objectif du jour`;
+    else sub.innerHTML = `Plus que <strong style="color:var(--accent)">${goal - todayTotal}</strong> reps pour ton objectif du jour`;
   } else {
     sub.textContent = 'Séance terminée';
   }
@@ -2728,7 +2728,7 @@ document.getElementById('export-btn').addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `pompes-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `pulsetimer-${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
