@@ -1982,6 +1982,9 @@ function startSession() {
   updateTotalBar();
 
   document.getElementById('timer-exercise').textContent = state.exercise || '';
+  // Reset tap/circle visibility — état propre en début de session
+  document.getElementById('tap-zone').style.display = 'none';
+  document.getElementById('progress-circle-wrap').style.display = '';
   showScreen('timer');
   requestWakeLock();
   buildSeriesTracker();
@@ -2119,6 +2122,10 @@ function startRestPhase() {
   state.phaseDuration = duration;
 
   if (duration <= 0) { startWorkPhase(); return; }
+
+  // Toujours afficher le cercle pendant le repos
+  document.getElementById('tap-zone').style.display = 'none';
+  document.getElementById('progress-circle-wrap').style.display = '';
 
   document.getElementById('timer-phase').textContent = 'REPOS';
   document.getElementById('timer-phase').className = 'timer-phase rest';
