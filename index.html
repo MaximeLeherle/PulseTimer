@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0a">
+<title>Défi Pompes — Timer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Bebas+Neue&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --panel: #141414;
+    --panel-2: #1c1c1c;
+    --line: #2a2a2a;
+    --text: #f5f5f5;
+    --muted: #888;
+    --accent: #d4ff3a;
+    --accent-soft: rgba(212, 255, 58, 0.15);
+    --accent-2: #3ad4ff;
+    --warn: #ff5e3a;
+    --rest: #3ad4ff;
+    --ok: #3aff8a;
+    --over: #ffb13a;
+  }
+  /* Thème clair (toggle) */
+  body.light {
+    --bg: #f5f5f0;
+    --panel: #ffffff;
+    --panel-2: #efefe8;
+    --line: #d8d8d0;
+    --text: #1a1a1a;
+    --muted: #777;
+    --accent: #4d8c00;
+    --accent-soft: rgba(77, 140, 0, 0.12);
+    --accent-2: #0080a0;
+    --rest: #0080a0;
+    --over: #b86600;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background-image:
+      radial-gradient(circle at 20% 0%, var(--accent-soft), transparent 50%),
+      radial-gradient(circle at 80% 100%, rgba(58, 212, 255, 0.05), transparent 50%);
+    min-height: 100vh;
+    padding: 20px;
+    padding-bottom: 60px;
+    transition: background 0.3s, color 0.3s;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+
+  /* ========== HEADER ========== */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+  .header-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .icon-btn:hover { border-color: var(--accent); }
+
+  /* ========== TODAY DASHBOARD ========== */
+  .today-card {
+    background: linear-gradient(135deg, var(--accent-soft), transparent);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .today-card::before {
+    content: '';
+    position: absolute;
+    top: -30%; right: -20%;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, var(--accent-soft), transparent 70%);
+    pointer-events: none;
+  }
+  .today-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .today-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+  .today-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .today-count .small { font-size: 22px; color: var(--muted); margin-left: 6px; }
+  .today-bar {
+    height: 8px;
+    background: var(--panel);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .today-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+  .today-bar-fill.complete { background: var(--ok); }
+  .today-streak {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .today-streak strong { color: var(--text); font-weight: 600; }
+
+  /* ========== MODE TABS ========== */
+  .mode-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--panel);
+    padding: 5px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+  }
+  .mode-tab {
+    padding: 10px 4px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .mode-tab.active { background: var(--accent); color: #000; }
+  body.light .mode-tab.active { color: #fff; }
+  .mode-tab:not(.active):hover { color: var(--text); background: var(--panel-2); }
+
+  /* ========== PANELS ========== */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 18px;
+  }
+  .panel h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .panel h2::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 12px;
+  }
+  .field:last-child { border-bottom: none; }
+  .field label {
+    font-size: 13px;
+    color: var(--muted);
+    flex: 1;
+    letter-spacing: 0.3px;
+  }
+  .field .field-row { display: flex; gap: 8px; align-items: center; }
+  .field input[type="number"], .field select {
+    width: 90px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    -moz-appearance: textfield;
+  }
+  .field input[type="number"]::-webkit-outer-spin-button,
+  .field input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .field-sep {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 0 4px;
+  }
+
+  /* Toggle */
+  .toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    background: var(--muted);
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+  .toggle.on { background: var(--accent-soft); border-color: var(--accent); }
+  .toggle.on::after { left: 22px; background: var(--accent); }
+
+  .mode-config { display: none; }
+  .mode-config.active { display: block; }
+
+  /* Summary box */
+  .summary-box {
+    margin-top: 14px;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent-soft), transparent);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .summary-box .item { text-align: center; }
+  .summary-box .item-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+  .summary-box .item-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .summary-box .item-unit { font-size: 11px; color: var(--muted); margin-left: 2px; }
+
+  /* Presets */
+  .preset-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .preset-chip {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .preset-chip:hover { border-color: var(--accent); }
+  .preset-chip .x {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+  }
+  .preset-chip .x:hover { color: var(--warn); }
+  .preset-empty {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Pyramide preview */
+  .pyramid-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    justify-content: center;
+  }
+  .pyramid-step {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 36px;
+    text-align: center;
+  }
+
+  /* ========== START BUTTON ========== */
+  .start-btn {
+    width: 100%;
+    padding: 22px;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  body.light .start-btn { color: #fff; }
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--accent-soft);
+  }
+  .start-btn:active { transform: translateY(0); }
+
+  /* ========== TIMER SCREEN ========== */
+  .full-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .full-screen.active { display: flex; }
+
+  .timer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .timer-phase {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+  .timer-phase.rest { color: var(--rest); }
+  .timer-phase.countdown { color: var(--warn); }
+  .timer-phase.done { color: var(--ok); }
+
+  .close-btn {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .timer-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 16px 0;
+  }
+
+  /* Cercle de progression principal */
+  .progress-circle-wrap {
+    position: relative;
+    width: min(80vw, 360px);
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .progress-circle {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .progress-circle .track {
+    fill: none;
+    stroke: var(--panel);
+    stroke-width: 6;
+  }
+  .progress-circle .bar {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear, stroke 0.3s;
+  }
+  .progress-circle .bar.rest { stroke: var(--rest); }
+  .progress-circle .bar.warn { stroke: var(--warn); }
+
+  .circle-content {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+  }
+  .big-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 18vw, 130px);
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: -1px;
+    font-variant-numeric: tabular-nums;
+  }
+  .big-time.warn { color: var(--warn); animation: pulse 0.5s infinite alternate; }
+  .big-time.rest { color: var(--rest); }
+  .big-time.countdown {
+    color: var(--warn);
+    font-size: clamp(120px, 28vw, 200px);
+  }
+  .effort-target {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .effort-target strong { color: var(--accent); font-size: 28px; }
+
+  @keyframes pulse {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0.7; transform: scale(1.03); }
+  }
+
+  /* Total bar */
+  .total-bar-wrap {
+    width: 100%;
+    max-width: 480px;
+  }
+  .total-bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+  }
+  .total-bar-header strong { color: var(--accent); font-weight: 600; }
+  .total-bar {
+    height: 10px;
+    background: var(--panel);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .total-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(.4,1,.4,1);
+  }
+
+  /* Series tracker (bulles avec compte) */
+  .series-tracker {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 480px;
+  }
+  .series-bubble {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 16px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+  .series-bubble.done {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .series-bubble.over {
+    background: rgba(255, 177, 58, 0.15);
+    border-color: var(--over);
+    color: var(--over);
+  }
+  .series-bubble.under {
+    background: rgba(255, 94, 58, 0.1);
+    border-color: var(--warn);
+    color: var(--warn);
+  }
+  .series-bubble.current {
+    border-color: var(--accent);
+    color: var(--accent);
+    animation: pulse 0.8s infinite alternate;
+  }
+
+  /* Footer controls */
+  .timer-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .timer-footer button {
+    padding: 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .timer-footer button.danger { border-color: var(--warn); color: var(--warn); }
+  .timer-footer button.primary {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+  body.light .timer-footer button.primary { color: #fff; }
+  .timer-footer button:hover { background: var(--panel-2); }
+
+  /* Input screen */
+  .input-card {
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+  }
+  .input-target-label {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .input-target-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--accent);
+    margin-bottom: 18px;
+    letter-spacing: 2px;
+  }
+  .big-input {
+    width: 240px;
+    padding: 24px;
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    color: var(--accent);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 80px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+  }
+  .big-input::-webkit-outer-spin-button,
+  .big-input::-webkit-inner-spin-button {
+    -webkit-appearance: none; margin: 0;
+  }
+  .quick-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    width: 100%;
+    max-width: 480px;
+    margin-top: 16px;
+  }
+  .small-btn {
+    padding: 14px 6px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .small-btn:hover { border-color: var(--accent); }
+
+  /* ========== DONE SCREEN ========== */
+  .done-card { text-align: center; padding: 20px; width: 100%; max-width: 520px; }
+  .done-card h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--ok);
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+  }
+  .done-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 24px 0;
+  }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 10px;
+  }
+  .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+  }
+  .pr-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-top: 6px;
+    animation: pulse 1s infinite alternate;
+  }
+
+  /* ========== HISTORY ========== */
+  .history-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .history-stat {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+  }
+  .history-stat .v {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .history-stat .l {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+  }
+
+  .chart-wrap {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-title {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  #chart-svg { width: 100%; height: 140px; display: block; }
+
+  .history-list {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .history-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+    font-size: 13px;
+  }
+  .history-row:last-child { border-bottom: none; }
+  .history-row .h-date { color: var(--muted); font-size: 11px; }
+  .history-row .h-mode {
+    color: var(--accent);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .history-row .h-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--text);
+    text-align: right;
+  }
+
+  .data-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    color: var(--text);
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 13px;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Hint */
+  .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+  }
+  .hint code {
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.active { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+  }
+  .modal h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .modal input[type="text"], .modal textarea {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="main-screen">
+
+  <header>
+    <h1>DÉFI POMPES</h1>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-btn" title="Thème clair/sombre">🌓</button>
+      <button class="icon-btn" id="history-btn">📊 STATS</button>
+    </div>
+  </header>
+
+  <!-- Today dashboard -->
+  <div class="today-card">
+    <div class="today-row">
+      <div>
+        <div class="today-label">AUJOURD'HUI</div>
+        <div class="today-count">
+          <span id="today-count">0</span><span class="small">/<span id="today-goal">100</span></span>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="today-label">SÉRIE</div>
+        <div class="today-count">
+          <span id="streak-days">0</span><span class="small">j 🔥</span>
+        </div>
+      </div>
+    </div>
+    <div class="today-bar">
+      <div class="today-bar-fill" id="today-bar-fill" style="width:0%"></div>
+    </div>
+    <div class="today-streak">
+      <span>Total : <strong id="total-all">0</strong> pompes</span>
+      <span>Record : <strong id="record-day">0</strong> en 1 jour</span>
+    </div>
+  </div>
+
+  <!-- Mode tabs -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="sprint">SPRINT</button>
+    <button class="mode-tab" data-mode="tabata">TABATA</button>
+    <button class="mode-tab" data-mode="series">SÉRIES</button>
+    <button class="mode-tab" data-mode="random">ALÉA.</button>
+    <button class="mode-tab" data-mode="emom">EMOM</button>
+  </div>
+  <div class="mode-tabs" style="grid-template-columns: 1fr; margin-top:-12px;">
+    <button class="mode-tab" data-mode="pyramid">PYRAMIDE</button>
+  </div>
+
+  <!-- ========== SPRINT ========== -->
+  <div class="panel mode-config active" id="config-sprint">
+    <h2>Sprint — X pompes en Y secondes</h2>
+    <div class="field">
+      <label>Objectif (nombre de pompes)</label>
+      <input type="number" id="sprint-target" min="1" value="20">
+    </div>
+    <div class="field">
+      <label>Durée (secondes)</label>
+      <input type="number" id="sprint-duration" min="5" value="60">
+    </div>
+    <p class="hint">Tu fais le maximum de pompes dans le temps imparti.</p>
+    <div class="summary-box" id="summary-sprint"></div>
+  </div>
+
+  <!-- ========== TABATA ========== -->
+  <div class="panel mode-config" id="config-tabata">
+    <h2>Tabata — Effort / Repos</h2>
+    <div class="field">
+      <label>Durée effort (secondes)</label>
+      <input type="number" id="tabata-work" min="5" value="20">
+    </div>
+    <div class="field">
+      <label>Durée repos (secondes)</label>
+      <input type="number" id="tabata-rest" min="0" value="10">
+    </div>
+    <div class="field">
+      <label>Nombre de séries</label>
+      <input type="number" id="tabata-rounds" min="1" value="8">
+    </div>
+    <div class="field">
+      <label>Objectif pompes / série (0 = libre)</label>
+      <input type="number" id="tabata-target" min="0" value="0">
+    </div>
+    <p class="hint">Format classique : 20s effort / 10s repos × 8 = 4 minutes.</p>
+    <div class="summary-box" id="summary-tabata"></div>
+  </div>
+
+  <!-- ========== SÉRIES ========== -->
+  <div class="panel mode-config" id="config-series">
+    <h2>Séries libres</h2>
+    <div class="field">
+      <label>Nombre de séries</label>
+      <input type="number" id="series-rounds" min="1" value="5">
+    </div>
+    <div class="field">
+      <label>Pompes par série (objectif)</label>
+      <input type="number" id="series-reps" min="1" value="10">
+    </div>
+    <div class="field">
+      <label>Repos entre séries (secondes)</label>
+      <input type="number" id="series-rest" min="0" value="60">
+    </div>
+    <div class="field">
+      <label>Limite de temps par série (sec, 0 = illimité)</label>
+      <input type="number" id="series-cap" min="0" value="0">
+    </div>
+    <p class="hint">Tu valides ton compte à la fin de chaque série, le repos démarre.</p>
+    <div class="summary-box" id="summary-series"></div>
+  </div>
+
+  <!-- ========== RANDOM ========== -->
+  <div class="panel mode-config" id="config-random">
+    <h2>Aléatoire — Tirage entre 2 nombres</h2>
+    <div class="field">
+      <label>Pompes par série (min - max)</label>
+      <div class="field-row">
+        <input type="number" id="random-min" min="1" value="5" style="width:70px">
+        <span class="field-sep">–</span>
+        <input type="number" id="random-max" min="1" value="10" style="width:70px">
+      </div>
+    </div>
+    <div class="field">
+      <label>Nombre de séries</label>
+      <input type="number" id="random-rounds" min="1" value="10">
+    </div>
+    <div class="field">
+      <label>Repos entre séries (secondes)</label>
+      <input type="number" id="random-rest" min="0" value="30">
+    </div>
+    <div class="field">
+      <label>Limite de temps par série (sec, 0 = illimité)</label>
+      <input type="number" id="random-cap" min="0" value="0">
+    </div>
+    <div class="field">
+      <label>Mode SURPRISE — objectif caché 🎲 (tu ne vois pas le nombre, tu dois compter dans ta tête)</label>
+      <div class="toggle" data-opt="randomSurprise"></div>
+    </div>
+    <p class="hint">À chaque série, un nombre aléatoire entre min et max est tiré. Surprise !</p>
+    <div class="summary-box" id="summary-random"></div>
+  </div>
+
+  <!-- ========== EMOM ========== -->
+  <div class="panel mode-config" id="config-emom">
+    <h2>EMOM — Every Minute On the Minute</h2>
+    <div class="field">
+      <label>Pompes par minute</label>
+      <input type="number" id="emom-reps" min="1" value="10">
+    </div>
+    <div class="field">
+      <label>Durée d'une "minute" (secondes)</label>
+      <input type="number" id="emom-period" min="15" value="60">
+    </div>
+    <div class="field">
+      <label>Nombre de minutes (rounds)</label>
+      <input type="number" id="emom-rounds" min="1" value="10">
+    </div>
+    <p class="hint">À chaque début de période, tu fais ton quota. Le repos = ce qui te reste sur la période.</p>
+    <div class="summary-box" id="summary-emom"></div>
+  </div>
+
+  <!-- ========== PYRAMIDE ========== -->
+  <div class="panel mode-config" id="config-pyramid">
+    <h2>Pyramide</h2>
+    <div class="field">
+      <label>Départ</label>
+      <input type="number" id="pyramid-start" min="1" value="1">
+    </div>
+    <div class="field">
+      <label>Sommet (max)</label>
+      <input type="number" id="pyramid-peak" min="2" value="10">
+    </div>
+    <div class="field">
+      <label>Pas (incrément)</label>
+      <input type="number" id="pyramid-step" min="1" value="1">
+    </div>
+    <div class="field">
+      <label>Aller-retour (montée + descente)</label>
+      <div class="toggle on" data-opt="pyramidUpDown"></div>
+    </div>
+    <div class="field">
+      <label>Repos entre paliers (secondes)</label>
+      <input type="number" id="pyramid-rest" min="0" value="30">
+    </div>
+    <div class="pyramid-preview" id="pyramid-preview"></div>
+    <p class="hint">Ex: 1, 2, 3, 4, 5, 4, 3, 2, 1 (aller-retour) ou 1, 2, 3, 4, 5 (montée seule).</p>
+    <div class="summary-box" id="summary-pyramid"></div>
+  </div>
+
+  <!-- ========== PRESETS ========== -->
+  <div class="panel">
+    <h2>Mes presets</h2>
+    <div class="preset-row" id="preset-row">
+      <span class="preset-empty">Aucun preset enregistré.</span>
+    </div>
+    <button class="small-btn" id="save-preset-btn" style="width:100%; padding:12px;">💾 SAUVEGARDER LA CONFIG ACTUELLE</button>
+  </div>
+
+  <!-- ========== OPTIONS ========== -->
+  <div class="panel">
+    <h2>Options générales</h2>
+    <div class="field">
+      <label>Objectif quotidien (pompes)</label>
+      <input type="number" id="opt-daily-goal" min="0" value="100">
+    </div>
+    <div class="field">
+      <label>Compte à rebours avant le départ (3-2-1)</label>
+      <div class="toggle on" data-opt="countdown"></div>
+    </div>
+    <div class="field">
+      <label>Sons (bips synthétisés)</label>
+      <div class="toggle on" data-opt="sound"></div>
+    </div>
+    <div class="field">
+      <label>Bip sur les 3 dernières secondes</label>
+      <div class="toggle on" data-opt="lastSeconds"></div>
+    </div>
+    <div class="field">
+      <label>Annonces vocales ("3, 2, 1, partez", "repos"...)</label>
+      <div class="toggle" data-opt="voice"></div>
+    </div>
+    <div class="field">
+      <label>Vibration sur mobile</label>
+      <div class="toggle on" data-opt="vibrate"></div>
+    </div>
+    <div class="field">
+      <label>Garder l'écran allumé</label>
+      <div class="toggle on" data-opt="wakeLock"></div>
+    </div>
+    <div class="field">
+      <label>Volume des bips (%)</label>
+      <input type="number" id="opt-volume" min="0" max="100" value="60">
+    </div>
+    <div class="field">
+      <label>Estim. temps par pompe (mode Séries sans cap, sec)</label>
+      <input type="number" id="opt-rep-estim" min="1" max="10" value="2">
+    </div>
+  </div>
+
+  <button class="start-btn" id="start-btn">▶ DÉMARRER</button>
+
+  <p class="hint" style="text-align:center; margin-top:20px;">
+    💾 Tout est sauvegardé dans ton navigateur (localStorage).<br>
+    📱 Sur téléphone : ajoute la page à l'écran d'accueil pour un accès rapide.
+  </p>
+
+</div>
+
+<!-- ========== TIMER SCREEN ========== -->
+<div class="full-screen" id="timer-screen">
+  <div class="timer-header">
+    <span class="timer-phase" id="timer-phase">PRÊT</span>
+    <button class="close-btn" id="close-btn">✕ FERMER</button>
+  </div>
+
+  <div class="timer-main">
+    <div class="progress-circle-wrap">
+      <svg class="progress-circle" viewBox="0 0 200 200">
+        <circle class="track" cx="100" cy="100" r="92"></circle>
+        <circle class="bar" id="circle-bar" cx="100" cy="100" r="92"
+          stroke-dasharray="578" stroke-dashoffset="578"></circle>
+      </svg>
+      <div class="circle-content">
+        <div class="big-time" id="big-time">00:00</div>
+        <div class="effort-target" id="effort-target"></div>
+      </div>
+    </div>
+
+    <div class="total-bar-wrap" id="total-wrap" style="display:none;">
+      <div class="total-bar-header">
+        <span>TOTAL : <strong id="total-current">0</strong> / <span id="total-goal">0</span></span>
+        <span id="total-pct">0%</span>
+      </div>
+      <div class="total-bar">
+        <div class="total-bar-fill" id="total-bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="series-tracker" id="series-tracker"></div>
+  </div>
+
+  <div class="timer-footer">
+    <button id="pause-btn">⏸ PAUSE</button>
+    <button id="next-btn">⏭ SUIVANT</button>
+  </div>
+</div>
+
+<!-- ========== INPUT SCREEN ========== -->
+<div class="full-screen" id="input-screen">
+  <div class="timer-header">
+    <span class="timer-phase" id="input-phase">SÉRIE TERMINÉE</span>
+    <button class="close-btn" id="input-close-btn">✕ FERMER</button>
+  </div>
+  <div class="timer-main">
+    <div class="input-card">
+      <div class="input-target-label">COMBIEN DE POMPES ?</div>
+      <div class="input-target-value" id="input-target-value"></div>
+      <input type="number" id="input-count" class="big-input" min="0" value="0">
+      <div class="quick-buttons">
+        <button class="small-btn quick-btn" data-add="-1">−1</button>
+        <button class="small-btn quick-btn" data-add="1">+1</button>
+        <button class="small-btn quick-btn" data-add="5">+5</button>
+        <button class="small-btn quick-btn" data-add="10">+10</button>
+        <button class="small-btn" id="input-zero-btn">0</button>
+      </div>
+    </div>
+  </div>
+  <div class="timer-footer">
+    <button id="input-skip-rest-btn">⏭ PASSER LE REPOS</button>
+    <button id="input-validate-btn" class="primary">✓ VALIDER</button>
+  </div>
+</div>
+
+<!-- ========== DONE SCREEN ========== -->
+<div class="full-screen" id="done-screen">
+  <div class="timer-header">
+    <span class="timer-phase done">TERMINÉ ✓</span>
+    <button class="close-btn" id="done-close-btn">✕ FERMER</button>
+  </div>
+  <div class="timer-main">
+    <div class="done-card">
+      <h2>BRAVO</h2>
+      <p style="color:var(--muted); letter-spacing:1px;" id="done-subtitle">Séance terminée</p>
+      <div id="pr-badges" style="margin-top: 8px;"></div>
+      <div class="done-stats">
+        <div class="stat-card">
+          <div class="stat-label">POMPES TOTALES</div>
+          <div class="stat-value" id="done-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">SÉRIES</div>
+          <div class="stat-value" id="done-rounds">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">DURÉE</div>
+          <div class="stat-value" id="done-duration">0s</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">MEILLEURE SÉRIE</div>
+          <div class="stat-value" id="done-best">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="timer-footer">
+    <button id="done-restart-btn">🔄 REFAIRE</button>
+    <button id="done-finish-btn" class="primary">✓ TERMINER</button>
+  </div>
+</div>
+
+<!-- ========== HISTORY SCREEN ========== -->
+<div class="full-screen" id="history-screen" style="overflow-y:auto; padding-bottom:40px;">
+  <div class="timer-header">
+    <span class="timer-phase">HISTORIQUE & STATS</span>
+    <button class="close-btn" id="history-close-btn">✕ FERMER</button>
+  </div>
+  <div style="max-width: 720px; margin: 20px auto 0; width:100%;">
+
+    <div class="history-stats">
+      <div class="history-stat"><div class="v" id="stat-total">0</div><div class="l">TOTAL POMPES</div></div>
+      <div class="history-stat"><div class="v" id="stat-sessions">0</div><div class="l">SÉANCES</div></div>
+      <div class="history-stat"><div class="v" id="stat-streak">0</div><div class="l">STREAK MAX</div></div>
+      <div class="history-stat"><div class="v" id="stat-record">0</div><div class="l">RECORD JOUR</div></div>
+      <div class="history-stat"><div class="v" id="stat-record-session">0</div><div class="l">RECORD SÉANCE</div></div>
+      <div class="history-stat"><div class="v" id="stat-avg">0</div><div class="l">MOY. / SÉANCE</div></div>
+    </div>
+
+    <div class="chart-wrap">
+      <div class="chart-title">30 DERNIERS JOURS</div>
+      <svg id="chart-svg" viewBox="0 0 600 140" preserveAspectRatio="none"></svg>
+    </div>
+
+    <div class="chart-title" style="margin-bottom:12px; padding: 0 4px; font-size:11px; color:var(--muted); letter-spacing:2px;">DERNIÈRES SÉANCES</div>
+    <div class="history-list" id="history-list">
+      <div class="history-row"><span class="h-date">Aucune séance enregistrée</span><span></span><span></span></div>
+    </div>
+
+    <div class="data-actions">
+      <button class="small-btn" id="export-btn">📤 EXPORTER</button>
+      <button class="small-btn" id="import-btn">📥 IMPORTER</button>
+      <button class="small-btn" id="clear-btn" style="border-color:var(--warn); color:var(--warn);">🗑 EFFACER</button>
+    </div>
+    <input type="file" id="import-file" accept=".json" style="display:none">
+
+  </div>
+</div>
+
+<!-- ========== MODAL (preset name, etc) ========== -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal">
+    <h3 id="modal-title">Sauvegarder le preset</h3>
+    <input type="text" id="modal-input" placeholder="Nom du preset...">
+    <div class="modal-actions">
+      <button class="small-btn" id="modal-cancel">Annuler</button>
+      <button class="small-btn" id="modal-ok" style="background:var(--accent); color:#000; border-color:var(--accent);">OK</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ============================================================
+//   ÉTAT
+// ============================================================
+const DEFAULT_OPTIONS = {
+  countdown: true,
+  sound: true,
+  lastSeconds: true,
+  voice: false,
+  vibrate: true,
+  wakeLock: true,
+  volume: 60,
+  dailyGoal: 100,
+  repEstim: 2,
+  pyramidUpDown: true,
+  randomSurprise: false,
+  theme: 'dark',
+};
+const DEFAULT_CONFIG = {
+  sprint:  { target: 20, duration: 60 },
+  tabata:  { work: 20, rest: 10, rounds: 8, target: 0 },
+  series:  { rounds: 5, reps: 10, rest: 60, cap: 0 },
+  random:  { min: 5, max: 10, rounds: 10, rest: 30, cap: 0 },
+  emom:    { reps: 10, period: 60, rounds: 10 },
+  pyramid: { start: 1, peak: 10, step: 1, rest: 30 },
+};
+
+const state = {
+  mode: 'sprint',
+  options: {...DEFAULT_OPTIONS},
+  config: JSON.parse(JSON.stringify(DEFAULT_CONFIG)),
+
+  // runtime
+  running: false,
+  paused: false,
+  phase: 'idle',
+  currentRound: 0,
+  totalRounds: 0,
+  roundCounts: [],     // [int]
+  roundTargets: [],    // [int] (target pour chaque série, peut différer en mode random/pyramid)
+  totalCount: 0,
+  totalGoal: 0,        // somme des targets
+  phaseDuration: 0,
+  phaseTarget: 0,
+  phaseStart: 0,
+  pausedElapsed: 0,
+  sessionStart: 0,
+  rafId: null,
+  wakeLockObj: null,
+  _pauseStart: 0,
+};
+
+// ============================================================
+//   STORAGE
+// ============================================================
+const LS_CONFIG = 'pompes-config-v2';
+const LS_HISTORY = 'pompes-history-v2';
+const LS_PRESETS = 'pompes-presets-v2';
+
+function saveSettings() {
+  try {
+    localStorage.setItem(LS_CONFIG, JSON.stringify({
+      mode: state.mode, options: state.options, config: state.config
+    }));
+  } catch(e) {}
+}
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(LS_CONFIG);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.mode) state.mode = data.mode;
+    if (data.options) Object.assign(state.options, data.options);
+    if (data.config) {
+      for (const k in data.config) {
+        if (state.config[k]) Object.assign(state.config[k], data.config[k]);
+      }
+    }
+  } catch(e) {}
+}
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(LS_HISTORY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveHistory(h) {
+  try { localStorage.setItem(LS_HISTORY, JSON.stringify(h)); } catch(e) {}
+}
+
+function loadPresets() {
+  try { return JSON.parse(localStorage.getItem(LS_PRESETS) || '[]'); }
+  catch(e) { return []; }
+}
+function savePresets(p) {
+  try { localStorage.setItem(LS_PRESETS, JSON.stringify(p)); } catch(e) {}
+}
+
+// ============================================================
+//   AUDIO
+// ============================================================
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function beep(freq = 880, duration = 0.15, type = 'sine') {
+  if (!state.options.sound) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const vol = state.options.volume / 100;
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(vol * 0.4, ctx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + duration);
+}
+const sounds = {
+  tick:        () => beep(660, 0.08, 'square'),
+  go:          () => beep(1320, 0.25, 'sine'),
+  rest:        () => beep(440, 0.25, 'sine'),
+  countdown:   () => beep(800, 0.12, 'square'),
+  done:        () => { beep(880,0.15); setTimeout(()=>beep(1100,0.15),150); setTimeout(()=>beep(1320,0.3),300); },
+  click:       () => beep(1500, 0.04, 'square'),
+};
+
+function speak(text) {
+  if (!state.options.voice) return;
+  if (!('speechSynthesis' in window)) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    u.rate = 1.1;
+    u.volume = state.options.volume / 100;
+    speechSynthesis.speak(u);
+  } catch(e) {}
+}
+
+function vibrate(pattern) {
+  if (!state.options.vibrate) return;
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+// ============================================================
+//   WAKE LOCK
+// ============================================================
+async function requestWakeLock() {
+  if (!state.options.wakeLock) return;
+  if (!('wakeLock' in navigator)) return;
+  try { state.wakeLockObj = await navigator.wakeLock.request('screen'); } catch(e) {}
+}
+function releaseWakeLock() {
+  if (state.wakeLockObj) { state.wakeLockObj.release().catch(()=>{}); state.wakeLockObj = null; }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && state.running) requestWakeLock();
+});
+
+// ============================================================
+//   UI : ÉCRANS
+// ============================================================
+const screens = {
+  main:    document.getElementById('main-screen'),
+  timer:   document.getElementById('timer-screen'),
+  input:   document.getElementById('input-screen'),
+  done:    document.getElementById('done-screen'),
+  history: document.getElementById('history-screen'),
+};
+function showScreen(name) {
+  screens.main.style.display = (name === 'main') ? '' : 'none';
+  ['timer','input','done','history'].forEach(s => {
+    screens[s].classList.toggle('active', name === s);
+  });
+}
+
+// ============================================================
+//   THÈME
+// ============================================================
+function applyTheme() {
+  document.body.classList.toggle('light', state.options.theme === 'light');
+  document.querySelector('meta[name="theme-color"]').content =
+    state.options.theme === 'light' ? '#f5f5f0' : '#0a0a0a';
+}
+document.getElementById('theme-btn').addEventListener('click', () => {
+  state.options.theme = state.options.theme === 'light' ? 'dark' : 'light';
+  applyTheme();
+  saveSettings();
+});
+
+// ============================================================
+//   MODE TABS
+// ============================================================
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    state.mode = tab.dataset.mode;
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === state.mode));
+    document.querySelectorAll('.mode-config').forEach(c =>
+      c.classList.toggle('active', c.id === 'config-' + state.mode));
+    saveSettings();
+  });
+});
+
+// ============================================================
+//   CONFIG INPUTS
+// ============================================================
+const configBindings = [
+  ['sprint-target', 'sprint', 'target'],
+  ['sprint-duration', 'sprint', 'duration'],
+  ['tabata-work', 'tabata', 'work'],
+  ['tabata-rest', 'tabata', 'rest'],
+  ['tabata-rounds', 'tabata', 'rounds'],
+  ['tabata-target', 'tabata', 'target'],
+  ['series-rounds', 'series', 'rounds'],
+  ['series-reps', 'series', 'reps'],
+  ['series-rest', 'series', 'rest'],
+  ['series-cap', 'series', 'cap'],
+  ['random-min', 'random', 'min'],
+  ['random-max', 'random', 'max'],
+  ['random-rounds', 'random', 'rounds'],
+  ['random-rest', 'random', 'rest'],
+  ['random-cap', 'random', 'cap'],
+  ['emom-reps', 'emom', 'reps'],
+  ['emom-period', 'emom', 'period'],
+  ['emom-rounds', 'emom', 'rounds'],
+  ['pyramid-start', 'pyramid', 'start'],
+  ['pyramid-peak', 'pyramid', 'peak'],
+  ['pyramid-step', 'pyramid', 'step'],
+  ['pyramid-rest', 'pyramid', 'rest'],
+];
+configBindings.forEach(([id, mode, key]) => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    state.config[mode][key] = parseInt(el.value) || 0;
+    saveSettings();
+    updateSummaries();
+    updatePyramidPreview();
+  });
+});
+
+// Options inputs
+document.getElementById('opt-volume').addEventListener('input', e => {
+  state.options.volume = parseInt(e.target.value) || 0; saveSettings();
+});
+document.getElementById('opt-daily-goal').addEventListener('input', e => {
+  state.options.dailyGoal = parseInt(e.target.value) || 0;
+  saveSettings();
+  refreshTodayDashboard();
+});
+document.getElementById('opt-rep-estim').addEventListener('input', e => {
+  state.options.repEstim = parseInt(e.target.value) || 2;
+  saveSettings();
+  updateSummaries();
+});
+
+// Toggles
+document.querySelectorAll('.toggle').forEach(t => {
+  t.addEventListener('click', () => {
+    const opt = t.dataset.opt;
+    state.options[opt] = !state.options[opt];
+    t.classList.toggle('on', state.options[opt]);
+    saveSettings();
+    updateSummaries();
+    updatePyramidPreview();
+  });
+});
+
+function applySettingsToUI() {
+  document.querySelectorAll('.mode-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.mode === state.mode));
+  document.querySelectorAll('.mode-config').forEach(c =>
+    c.classList.toggle('active', c.id === 'config-' + state.mode));
+  configBindings.forEach(([id, mode, key]) => {
+    document.getElementById(id).value = state.config[mode][key];
+  });
+  document.getElementById('opt-volume').value = state.options.volume;
+  document.getElementById('opt-daily-goal').value = state.options.dailyGoal;
+  document.getElementById('opt-rep-estim').value = state.options.repEstim;
+  document.querySelectorAll('.toggle').forEach(t => {
+    t.classList.toggle('on', !!state.options[t.dataset.opt]);
+  });
+}
+
+// ============================================================
+//   PYRAMIDE — calcul de la séquence
+// ============================================================
+function buildPyramidSequence() {
+  const p = state.config.pyramid;
+  const start = Math.max(1, p.start);
+  const peak = Math.max(start, p.peak);
+  const step = Math.max(1, p.step);
+  const seq = [];
+  for (let v = start; v <= peak; v += step) seq.push(v);
+  if (state.options.pyramidUpDown) {
+    for (let v = peak - step; v >= start; v -= step) seq.push(v);
+  }
+  return seq;
+}
+function updatePyramidPreview() {
+  const seq = buildPyramidSequence();
+  const wrap = document.getElementById('pyramid-preview');
+  wrap.innerHTML = seq.map(n => `<div class="pyramid-step">${n}</div>`).join('');
+}
+
+// ============================================================
+//   FORMATAGE
+// ============================================================
+function formatTime(seconds) {
+  seconds = Math.max(0, Math.ceil(seconds));
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function fmtDuration(seconds) {
+  seconds = Math.round(seconds);
+  if (seconds < 60) return seconds + 's';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  if (s === 0) return m + 'min';
+  return m + 'min ' + s + 's';
+}
+
+// ============================================================
+//   RÉSUMÉS EN TEMPS RÉEL
+// ============================================================
+function summaryHTML(items) {
+  return items.map(it => `
+    <div class="item">
+      <div class="item-label">${it.label}</div>
+      <div class="item-value">${it.value}<span class="item-unit">${it.unit || ''}</span></div>
+    </div>`).join('');
+}
+function updateSummaries() {
+  // SPRINT
+  const sp = state.config.sprint;
+  document.getElementById('summary-sprint').innerHTML = summaryHTML([
+    { label: 'OBJECTIF', value: sp.target, unit: ' p.' },
+    { label: 'TEMPS', value: fmtDuration(sp.duration) },
+    { label: 'RYTHME', value: sp.duration > 0 ? (sp.target / sp.duration).toFixed(2) : '—', unit: '/s' },
+  ]);
+
+  // TABATA
+  const tb = state.config.tabata;
+  const tbTotalSec = (tb.work + tb.rest) * tb.rounds - tb.rest;
+  const tbTotalPompes = (tb.target || 0) * tb.rounds;
+  document.getElementById('summary-tabata').innerHTML = summaryHTML([
+    { label: tb.target > 0 ? 'TOTAL' : 'SÉRIES', value: tb.target > 0 ? tbTotalPompes : tb.rounds, unit: tb.target > 0 ? ' p.' : ' x' },
+    { label: 'DURÉE', value: fmtDuration(tbTotalSec) },
+    { label: 'EFFORT', value: fmtDuration(tb.work * tb.rounds) },
+  ]);
+
+  // SÉRIES
+  const sr = state.config.series;
+  const srTotalPompes = sr.reps * sr.rounds;
+  const estimEffort = sr.cap > 0 ? sr.cap : sr.reps * state.options.repEstim;
+  const srTotalSec = estimEffort * sr.rounds + sr.rest * Math.max(0, sr.rounds - 1);
+  document.getElementById('summary-series').innerHTML = summaryHTML([
+    { label: 'TOTAL', value: srTotalPompes, unit: ' p.' },
+    { label: sr.cap > 0 ? 'DURÉE' : 'DURÉE ≈', value: fmtDuration(srTotalSec) },
+    { label: 'REPOS', value: fmtDuration(sr.rest * Math.max(0, sr.rounds - 1)) },
+  ]);
+
+  // RANDOM
+  const rd = state.config.random;
+  const rdMin = Math.min(rd.min, rd.max);
+  const rdMax = Math.max(rd.min, rd.max);
+  const rdAvg = (rdMin + rdMax) / 2;
+  const rdTotalAvg = Math.round(rdAvg * rd.rounds);
+  const rdEstim = rd.cap > 0 ? rd.cap : rdAvg * state.options.repEstim;
+  const rdTotalSec = rdEstim * rd.rounds + rd.rest * Math.max(0, rd.rounds - 1);
+  document.getElementById('summary-random').innerHTML = summaryHTML([
+    { label: 'TOTAL ≈', value: rdTotalAvg, unit: ' p.' },
+    { label: 'FOURCHETTE', value: `${rdMin * rd.rounds}-${rdMax * rd.rounds}`, unit: '' },
+    { label: 'DURÉE ≈', value: fmtDuration(rdTotalSec) },
+  ]);
+
+  // EMOM
+  const em = state.config.emom;
+  const emTotal = em.reps * em.rounds;
+  const emTotalSec = em.period * em.rounds;
+  document.getElementById('summary-emom').innerHTML = summaryHTML([
+    { label: 'TOTAL', value: emTotal, unit: ' p.' },
+    { label: 'DURÉE', value: fmtDuration(emTotalSec) },
+    { label: 'PAR MIN', value: em.reps, unit: ' p.' },
+  ]);
+
+  // PYRAMIDE
+  const seq = buildPyramidSequence();
+  const pyTotal = seq.reduce((a,b) => a+b, 0);
+  const py = state.config.pyramid;
+  const pyEstim = seq.reduce((a,b) => a + b * state.options.repEstim, 0)
+                  + py.rest * Math.max(0, seq.length - 1);
+  document.getElementById('summary-pyramid').innerHTML = summaryHTML([
+    { label: 'TOTAL', value: pyTotal, unit: ' p.' },
+    { label: 'PALIERS', value: seq.length, unit: '' },
+    { label: 'DURÉE ≈', value: fmtDuration(pyEstim) },
+  ]);
+}
+
+// ============================================================
+//   PRESETS
+// ============================================================
+function renderPresets() {
+  const presets = loadPresets();
+  const wrap = document.getElementById('preset-row');
+  if (!presets.length) {
+    wrap.innerHTML = '<span class="preset-empty">Aucun preset enregistré.</span>';
+    return;
+  }
+  wrap.innerHTML = '';
+  presets.forEach((p, idx) => {
+    const chip = document.createElement('div');
+    chip.className = 'preset-chip';
+    chip.innerHTML = `<span data-load="${idx}">${escapeHtml(p.name)} · ${p.mode.toUpperCase()}</span><span class="x" data-del="${idx}">✕</span>`;
+    wrap.appendChild(chip);
+  });
+  wrap.querySelectorAll('[data-load]').forEach(el => {
+    el.addEventListener('click', () => loadPreset(parseInt(el.dataset.load)));
+  });
+  wrap.querySelectorAll('[data-del]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const presets = loadPresets();
+      presets.splice(parseInt(el.dataset.del), 1);
+      savePresets(presets);
+      renderPresets();
+    });
+  });
+}
+function loadPreset(idx) {
+  const presets = loadPresets();
+  const p = presets[idx];
+  if (!p) return;
+  state.mode = p.mode;
+  state.config[p.mode] = {...p.config};
+  if (p.options) Object.assign(state.options, p.options);
+  saveSettings();
+  applySettingsToUI();
+  updateSummaries();
+  updatePyramidPreview();
+  showToast(`✓ Preset "${p.name}" chargé`);
+}
+document.getElementById('save-preset-btn').addEventListener('click', () => {
+  showModal('Nom du preset', '', name => {
+    if (!name || !name.trim()) return;
+    const presets = loadPresets();
+    presets.push({
+      name: name.trim().slice(0, 40),
+      mode: state.mode,
+      config: {...state.config[state.mode]},
+      // on ne sauvegarde pas pyramidUpDown/repEstim ici pour rester simple
+    });
+    savePresets(presets);
+    renderPresets();
+    showToast('✓ Preset sauvegardé');
+  });
+});
+
+// ============================================================
+//   MODAL
+// ============================================================
+let modalCallback = null;
+function showModal(title, defaultValue, cb) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-input').value = defaultValue || '';
+  modalCallback = cb;
+  document.getElementById('modal-backdrop').classList.add('active');
+  setTimeout(() => document.getElementById('modal-input').focus(), 100);
+}
+document.getElementById('modal-cancel').addEventListener('click', () => {
+  document.getElementById('modal-backdrop').classList.remove('active');
+  modalCallback = null;
+});
+document.getElementById('modal-ok').addEventListener('click', () => {
+  const val = document.getElementById('modal-input').value;
+  document.getElementById('modal-backdrop').classList.remove('active');
+  if (modalCallback) modalCallback(val);
+  modalCallback = null;
+});
+document.getElementById('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('modal-ok').click();
+  else if (e.key === 'Escape') document.getElementById('modal-cancel').click();
+});
+
+// ============================================================
+//   TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ============================================================
+//   DÉMARRAGE D'UNE SESSION
+// ============================================================
+document.getElementById('start-btn').addEventListener('click', () => {
+  ensureAudio();
+  startSession();
+});
+document.getElementById('close-btn').addEventListener('click', () => abortSession());
+document.getElementById('done-close-btn').addEventListener('click', () => { showScreen('main'); refreshTodayDashboard(); });
+document.getElementById('done-finish-btn').addEventListener('click', () => { showScreen('main'); refreshTodayDashboard(); });
+document.getElementById('done-restart-btn').addEventListener('click', () => { showScreen('main'); setTimeout(startSession, 100); });
+
+function buildRoundTargets() {
+  const m = state.mode;
+  const c = state.config[m];
+  if (m === 'sprint') return [c.target];
+  if (m === 'tabata') return Array(c.rounds).fill(c.target || 0);
+  if (m === 'series') return Array(c.rounds).fill(c.reps);
+  if (m === 'random') {
+    const lo = Math.min(c.min, c.max);
+    const hi = Math.max(c.min, c.max);
+    return Array.from({length: c.rounds}, () =>
+      Math.floor(Math.random() * (hi - lo + 1)) + lo);
+  }
+  if (m === 'emom') return Array(c.rounds).fill(c.reps);
+  if (m === 'pyramid') return buildPyramidSequence();
+  return [];
+}
+
+function startSession() {
+  state.running = true;
+  state.paused = false;
+  state.totalCount = 0;
+  state.roundCounts = [];
+  state.roundTargets = buildRoundTargets();
+  state.totalRounds = state.roundTargets.length;
+  state.totalGoal = state.roundTargets.reduce((a,b) => a+b, 0);
+  state.currentRound = 0;
+  state.sessionStart = performance.now();
+  state.pausedElapsed = 0;
+
+  // Toggle l'affichage de la barre totale (cachée en mode surprise)
+  const surpriseActive = state.mode === 'random' && state.options.randomSurprise;
+  document.getElementById('total-wrap').style.display =
+    state.totalRounds > 1 && state.totalGoal > 0 && !surpriseActive ? '' : 'none';
+  document.getElementById('total-goal').textContent = state.totalGoal;
+  updateTotalBar();
+
+  showScreen('timer');
+  requestWakeLock();
+  buildSeriesTracker();
+
+  if (state.options.countdown) startCountdown();
+  else startWorkPhase();
+}
+
+function abortSession() {
+  state.running = false;
+  cancelAnimationFrame(state.rafId);
+  releaseWakeLock();
+  showScreen('main');
+  refreshTodayDashboard();
+}
+
+// ============================================================
+//   COUNTDOWN
+// ============================================================
+function startCountdown() {
+  state.phase = 'countdown';
+  document.getElementById('timer-phase').textContent = 'PRÊT...';
+  document.getElementById('timer-phase').className = 'timer-phase countdown';
+  document.getElementById('effort-target').innerHTML = '';
+  setCircle(0, 'warn');
+
+  let n = 3;
+  const big = document.getElementById('big-time');
+  big.className = 'big-time countdown';
+  big.textContent = n;
+  sounds.countdown();
+  speak('Trois');
+
+  const iv = setInterval(() => {
+    if (!state.running) { clearInterval(iv); return; }
+    if (state.paused) return;
+    n--;
+    if (n > 0) {
+      big.textContent = n;
+      sounds.countdown();
+      speak(n === 2 ? 'Deux' : 'Un');
+    } else if (n === 0) {
+      big.textContent = 'GO';
+      sounds.go();
+      speak('Partez');
+    } else {
+      clearInterval(iv);
+      startWorkPhase();
+    }
+  }, 1000);
+}
+
+// ============================================================
+//   PHASE TRAVAIL
+// ============================================================
+function startWorkPhase() {
+  state.phase = 'work';
+  state.currentRound++;
+  state.phaseStart = performance.now();
+  state.pausedElapsed = 0;
+
+  const m = state.mode;
+  const target = state.roundTargets[state.currentRound - 1] || 0;
+  let duration = 0;
+
+  if (m === 'sprint') duration = state.config.sprint.duration;
+  else if (m === 'tabata') duration = state.config.tabata.work;
+  else if (m === 'series') duration = state.config.series.cap;
+  else if (m === 'random') duration = state.config.random.cap;
+  else if (m === 'emom') duration = state.config.emom.period;
+  else if (m === 'pyramid') duration = 0;
+
+  state.phaseDuration = duration;
+  state.phaseTarget = target;
+
+  // Phase label
+  const phaseEl = document.getElementById('timer-phase');
+  if (m === 'sprint') phaseEl.textContent = 'SPRINT';
+  else if (m === 'tabata') phaseEl.textContent = `EFFORT ${state.currentRound}/${state.totalRounds}`;
+  else if (m === 'emom') phaseEl.textContent = `MIN ${state.currentRound}/${state.totalRounds}`;
+  else phaseEl.textContent = `SÉRIE ${state.currentRound}/${state.totalRounds}`;
+  phaseEl.className = 'timer-phase';
+
+  document.getElementById('big-time').className = 'big-time';
+
+  // Affichage objectif
+  const isSurprise = m === 'random' && state.options.randomSurprise;
+  const tgEl = document.getElementById('effort-target');
+  if (isSurprise) {
+    tgEl.innerHTML = `<strong>?</strong> POMPES 🎲`;
+  } else if (target > 0) {
+    tgEl.innerHTML = `<strong>${target}</strong> POMPES`;
+    if (m === 'random') tgEl.innerHTML += ' 🎲';
+  } else {
+    tgEl.innerHTML = 'LIBRE';
+  }
+
+  setCircle(0, 'normal');
+  buildSeriesTracker();
+  sounds.go();
+  if (!isSurprise && m === 'random' && target > 0) speak(`${target} pompes`);
+  else if (target > 0) speak('Go');
+  vibrate(50);
+  tickLoop();
+}
+
+// ============================================================
+//   PHASE REPOS
+// ============================================================
+function startRestPhase() {
+  state.phase = 'rest';
+  state.phaseStart = performance.now();
+  state.pausedElapsed = 0;
+
+  const m = state.mode;
+  let duration = 0;
+  if (m === 'tabata') duration = state.config.tabata.rest;
+  else if (m === 'series') duration = state.config.series.rest;
+  else if (m === 'random') duration = state.config.random.rest;
+  else if (m === 'pyramid') duration = state.config.pyramid.rest;
+  else if (m === 'emom') duration = 0; // pas de repos explicite, géré par tickLoop
+  state.phaseDuration = duration;
+
+  if (duration <= 0) { startWorkPhase(); return; }
+
+  document.getElementById('timer-phase').textContent = 'REPOS';
+  document.getElementById('timer-phase').className = 'timer-phase rest';
+  document.getElementById('big-time').className = 'big-time rest';
+  document.getElementById('effort-target').innerHTML = '';
+  setCircle(0, 'rest');
+  sounds.rest();
+  speak('Repos');
+  vibrate([30, 30, 30]);
+  tickLoop();
+}
+
+// ============================================================
+//   CIRCLE PROGRESS
+// ============================================================
+const CIRCLE_LEN = 2 * Math.PI * 92; // ≈ 578
+function setCircle(pct, variant = 'normal') {
+  const bar = document.getElementById('circle-bar');
+  bar.classList.remove('rest', 'warn');
+  if (variant === 'rest') bar.classList.add('rest');
+  else if (variant === 'warn') bar.classList.add('warn');
+  const offset = CIRCLE_LEN * (1 - Math.max(0, Math.min(1, pct)));
+  bar.setAttribute('stroke-dashoffset', offset);
+}
+
+// ============================================================
+//   TICK LOOP
+// ============================================================
+let lastWholeSecond = -1;
+function tickLoop() {
+  cancelAnimationFrame(state.rafId);
+  lastWholeSecond = -1;
+
+  function loop() {
+    if (!state.running) return;
+    if (state.paused) { state.rafId = requestAnimationFrame(loop); return; }
+
+    const elapsed = (performance.now() - state.phaseStart - state.pausedElapsed) / 1000;
+    const duration = state.phaseDuration;
+
+    let remaining;
+    let pct;
+    if (duration === 0) {
+      remaining = -1;
+      pct = 0;
+      document.getElementById('big-time').textContent = formatTime(elapsed);
+    } else {
+      remaining = duration - elapsed;
+      pct = elapsed / duration;
+      document.getElementById('big-time').textContent = formatTime(remaining);
+    }
+
+    setCircle(pct, state.phase === 'rest' ? 'rest' : 'normal');
+
+    if (state.options.lastSeconds && remaining > 0 && remaining <= 3) {
+      const sec = Math.ceil(remaining);
+      if (sec !== lastWholeSecond) {
+        lastWholeSecond = sec;
+        if (state.phase === 'work') {
+          document.getElementById('big-time').classList.add('warn');
+          setCircle(pct, 'warn');
+          sounds.tick();
+        } else if (state.phase === 'rest') {
+          sounds.tick();
+        }
+      }
+    }
+
+    let phaseEnded = false;
+    if (state.phase === 'work') {
+      if (duration > 0 && remaining <= 0) phaseEnded = true;
+    } else if (state.phase === 'rest') {
+      if (remaining <= 0) phaseEnded = true;
+    }
+
+    if (phaseEnded) { onPhaseEnd(); return; }
+    state.rafId = requestAnimationFrame(loop);
+  }
+  state.rafId = requestAnimationFrame(loop);
+}
+
+// ============================================================
+//   FIN DE PHASE
+// ============================================================
+function onPhaseEnd() {
+  if (state.phase === 'work') {
+    cancelAnimationFrame(state.rafId);
+    showInputScreen();
+  } else if (state.phase === 'rest') {
+    startWorkPhase();
+  }
+}
+
+// ============================================================
+//   ÉCRAN DE SAISIE
+// ============================================================
+function showInputScreen() {
+  state.phase = 'input';
+  const target = state.phaseTarget;
+
+  document.getElementById('input-phase').textContent =
+    state.mode === 'sprint' ? 'SPRINT TERMINÉ' :
+    `SÉRIE ${state.currentRound}/${state.totalRounds} TERMINÉE`;
+
+  const isSurpriseInput = state.mode === 'random' && state.options.randomSurprise;
+  const tgEl = document.getElementById('input-target-value');
+  if (isSurpriseInput && target > 0) {
+    tgEl.innerHTML = `🎲 Objectif secret révélé : <strong style="color:var(--accent);font-size:28px">${target}</strong>`;
+  } else {
+    tgEl.textContent = target > 0 ? `Objectif : ${target}` : 'Libre';
+  }
+
+  const inputEl = document.getElementById('input-count');
+  inputEl.value = isSurpriseInput ? 0 : (target > 0 ? target : 0);
+  setTimeout(() => { inputEl.focus(); inputEl.select(); }, 100);
+
+  const skipBtn = document.getElementById('input-skip-rest-btn');
+  const isLast = state.currentRound >= state.totalRounds;
+  skipBtn.style.display = isLast ? 'none' : '';
+
+  screens.timer.classList.remove('active');
+  screens.input.classList.add('active');
+}
+
+function validateInput(skipRest = false) {
+  const val = Math.max(0, parseInt(document.getElementById('input-count').value) || 0);
+  state.roundCounts.push(val);
+  state.totalCount += val;
+  updateTotalBar();
+
+  // Feedback surprise
+  if (state.mode === 'random' && state.options.randomSurprise) {
+    const target = state.phaseTarget;
+    if (target > 0) {
+      const diff = val - target;
+      if (diff === 0) showToast(`🎯 PARFAIT ! Exactement ${target} !`);
+      else if (diff > 0) showToast(`✓ Objectif atteint ! +${diff} de plus`);
+      else showToast(`Objectif : ${target} — il manquait ${Math.abs(diff)}`);
+    }
+  }
+
+  screens.input.classList.remove('active');
+
+  if (state.currentRound >= state.totalRounds) return finishSession();
+
+  screens.timer.classList.add('active');
+  // Determine si on a un repos
+  const m = state.mode;
+  let restDur = 0;
+  if (m === 'tabata') restDur = state.config.tabata.rest;
+  else if (m === 'series') restDur = state.config.series.rest;
+  else if (m === 'random') restDur = state.config.random.rest;
+  else if (m === 'pyramid') restDur = state.config.pyramid.rest;
+  // EMOM : pas de repos explicite, on enchaîne la prochaine "minute" direct
+
+  if (skipRest || restDur <= 0 || m === 'emom') startWorkPhase();
+  else startRestPhase();
+}
+
+document.getElementById('input-validate-btn').addEventListener('click', () => validateInput(false));
+document.getElementById('input-skip-rest-btn').addEventListener('click', () => validateInput(true));
+document.getElementById('input-close-btn').addEventListener('click', () => {
+  screens.input.classList.remove('active');
+  abortSession();
+});
+document.getElementById('input-zero-btn').addEventListener('click', () => {
+  document.getElementById('input-count').value = 0;
+  sounds.click();
+});
+document.querySelectorAll('.quick-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inputEl = document.getElementById('input-count');
+    const delta = parseInt(btn.dataset.add);
+    inputEl.value = Math.max(0, (parseInt(inputEl.value) || 0) + delta);
+    sounds.click();
+  });
+});
+document.getElementById('input-count').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); validateInput(false); }
+});
+
+// ============================================================
+//   PAUSE / NEXT
+// ============================================================
+document.getElementById('pause-btn').addEventListener('click', () => {
+  if (!state.running) return;
+  state.paused = !state.paused;
+  if (state.paused) {
+    state._pauseStart = performance.now();
+    document.getElementById('pause-btn').textContent = '▶ REPRENDRE';
+  } else {
+    state.pausedElapsed += performance.now() - state._pauseStart;
+    document.getElementById('pause-btn').textContent = '⏸ PAUSE';
+  }
+});
+document.getElementById('next-btn').addEventListener('click', () => {
+  if (!state.running) return;
+  onPhaseEnd();
+});
+
+// ============================================================
+//   TRACKER (BULLES)
+// ============================================================
+function buildSeriesTracker() {
+  const wrap = document.getElementById('series-tracker');
+  wrap.innerHTML = '';
+  if (state.totalRounds <= 1) return;
+  for (let i = 0; i < state.totalRounds; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'series-bubble';
+    const target = state.roundTargets[i] || 0;
+    const count = state.roundCounts[i];
+
+    const isSurpriseBubble = state.mode === 'random' && state.options.randomSurprise;
+    if (i + 1 < state.currentRound || (i + 1 === state.currentRound && state.phase === 'rest')) {
+      // Série terminée : on affiche le compte
+      if (count !== undefined) {
+        dot.textContent = count;
+        if (target > 0 && count > target) dot.classList.add('over');
+        else if (target > 0 && count < target) dot.classList.add('under');
+        else dot.classList.add('done');
+      } else {
+        dot.classList.add('done');
+        dot.textContent = '✓';
+      }
+    } else if (i + 1 === state.currentRound && state.phase === 'work') {
+      dot.classList.add('current');
+      dot.textContent = isSurpriseBubble ? '?' : (target > 0 ? target : '·');
+    } else {
+      // À venir : on montre la cible (cachée en surprise)
+      dot.textContent = isSurpriseBubble ? '?' : (target > 0 ? target : '·');
+    }
+    wrap.appendChild(dot);
+  }
+}
+
+// ============================================================
+//   TOTAL BAR
+// ============================================================
+function updateTotalBar() {
+  const goal = state.totalGoal;
+  document.getElementById('total-current').textContent = state.totalCount;
+  if (goal > 0) {
+    const pct = Math.min(100, (state.totalCount / goal) * 100);
+    document.getElementById('total-bar-fill').style.width = pct + '%';
+    document.getElementById('total-pct').textContent = Math.round(pct) + '%';
+  } else {
+    document.getElementById('total-bar-fill').style.width = '0%';
+    document.getElementById('total-pct').textContent = '—';
+  }
+  buildSeriesTracker();
+}
+
+// ============================================================
+//   FIN DE SESSION
+// ============================================================
+function finishSession() {
+  state.running = false;
+  cancelAnimationFrame(state.rafId);
+  releaseWakeLock();
+  state.phase = 'done';
+  sounds.done();
+  speak('Bravo, séance terminée');
+  vibrate([100, 50, 100, 50, 200]);
+
+  const totalDur = (performance.now() - state.sessionStart) / 1000;
+  const totalCount = state.totalCount;
+  const rounds = state.roundCounts.length;
+  const best = rounds ? Math.max(...state.roundCounts) : 0;
+
+  // Sauvegarder dans l'historique
+  const session = {
+    date: new Date().toISOString(),
+    mode: state.mode,
+    total: totalCount,
+    rounds: rounds,
+    duration: totalDur,
+    best: best,
+    counts: [...state.roundCounts],
+    targets: [...state.roundTargets],
+  };
+  const history = loadHistory();
+  history.push(session);
+  saveHistory(history);
+
+  // PR detection
+  const prevRecord = history.slice(0, -1).reduce((m, s) => Math.max(m, s.total), 0);
+  const isSessionPR = totalCount > prevRecord && totalCount > 0;
+
+  // Today PR
+  const today = new Date().toISOString().slice(0, 10);
+  const todaySessions = history.filter(s => s.date.slice(0, 10) === today);
+  const todayTotal = todaySessions.reduce((a, s) => a + s.total, 0);
+  const prevDays = {};
+  history.slice(0, -1).forEach(s => {
+    const d = s.date.slice(0, 10);
+    prevDays[d] = (prevDays[d] || 0) + s.total;
+  });
+  const prevDayRecord = Math.max(0, ...Object.values(prevDays));
+  const isDayPR = todayTotal > prevDayRecord && todayTotal > 0;
+
+  document.getElementById('done-total').textContent = totalCount;
+  document.getElementById('done-rounds').textContent = rounds;
+  document.getElementById('done-duration').textContent = formatTime(totalDur);
+  document.getElementById('done-best').textContent = best;
+
+  const prBadges = document.getElementById('pr-badges');
+  prBadges.innerHTML = '';
+  if (isSessionPR) prBadges.innerHTML += '<span class="pr-badge">🏆 RECORD SÉANCE</span> ';
+  if (isDayPR) prBadges.innerHTML += '<span class="pr-badge">🔥 RECORD JOUR</span>';
+
+  // Progression vers objectif quotidien
+  const goal = state.options.dailyGoal;
+  const sub = document.getElementById('done-subtitle');
+  if (goal > 0) {
+    if (todayTotal >= goal) sub.innerHTML = `🎯 Objectif quotidien atteint ! (${todayTotal}/${goal})`;
+    else sub.innerHTML = `Plus que <strong style="color:var(--accent)">${goal - todayTotal}</strong> pompes pour ton objectif du jour`;
+  } else {
+    sub.textContent = 'Séance terminée';
+  }
+
+  showScreen('done');
+}
+
+// ============================================================
+//   TODAY DASHBOARD
+// ============================================================
+function refreshTodayDashboard() {
+  const history = loadHistory();
+  const today = new Date().toISOString().slice(0, 10);
+  const todayTotal = history
+    .filter(s => s.date.slice(0, 10) === today)
+    .reduce((a, s) => a + s.total, 0);
+
+  const goal = state.options.dailyGoal || 0;
+  document.getElementById('today-count').textContent = todayTotal;
+  document.getElementById('today-goal').textContent = goal;
+
+  const fill = document.getElementById('today-bar-fill');
+  if (goal > 0) {
+    const pct = Math.min(100, (todayTotal / goal) * 100);
+    fill.style.width = pct + '%';
+    fill.classList.toggle('complete', todayTotal >= goal);
+  } else {
+    fill.style.width = '0%';
+  }
+
+  // Streak (jours consécutifs avec au moins 1 pompe)
+  const days = {};
+  history.forEach(s => {
+    const d = s.date.slice(0, 10);
+    days[d] = (days[d] || 0) + s.total;
+  });
+  let streak = 0;
+  const cursor = new Date();
+  while (true) {
+    const ds = cursor.toISOString().slice(0, 10);
+    if (days[ds] && days[ds] > 0) {
+      streak++;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      // si c'est aujourd'hui mais 0 pompes, on regarde quand même hier
+      if (streak === 0 && ds === today) {
+        cursor.setDate(cursor.getDate() - 1);
+        continue;
+      }
+      break;
+    }
+  }
+  document.getElementById('streak-days').textContent = streak;
+
+  // Total all-time + record day
+  const totalAll = Object.values(days).reduce((a, b) => a + b, 0);
+  const recordDay = Math.max(0, ...Object.values(days));
+  document.getElementById('total-all').textContent = totalAll;
+  document.getElementById('record-day').textContent = recordDay;
+}
+
+// ============================================================
+//   HISTORY SCREEN
+// ============================================================
+document.getElementById('history-btn').addEventListener('click', () => {
+  renderHistory();
+  showScreen('history');
+});
+document.getElementById('history-close-btn').addEventListener('click', () => showScreen('main'));
+
+function renderHistory() {
+  const history = loadHistory();
+
+  // Stats
+  const days = {};
+  history.forEach(s => {
+    const d = s.date.slice(0, 10);
+    days[d] = (days[d] || 0) + s.total;
+  });
+  const totalAll = Object.values(days).reduce((a, b) => a + b, 0);
+  const sessions = history.length;
+  const recordDay = Math.max(0, ...Object.values(days));
+  const recordSession = history.reduce((m, s) => Math.max(m, s.total), 0);
+  const avg = sessions > 0 ? Math.round(history.reduce((a, s) => a + s.total, 0) / sessions) : 0;
+
+  // Streak max (calcule la plus longue streak de tous les temps)
+  const sortedDays = Object.keys(days).sort();
+  let maxStreak = 0, curStreak = 0, prevDate = null;
+  sortedDays.forEach(d => {
+    if (days[d] <= 0) { curStreak = 0; prevDate = null; return; }
+    if (prevDate) {
+      const diff = (new Date(d) - new Date(prevDate)) / (1000 * 60 * 60 * 24);
+      if (diff === 1) curStreak++;
+      else curStreak = 1;
+    } else curStreak = 1;
+    maxStreak = Math.max(maxStreak, curStreak);
+    prevDate = d;
+  });
+
+  document.getElementById('stat-total').textContent = totalAll;
+  document.getElementById('stat-sessions').textContent = sessions;
+  document.getElementById('stat-streak').textContent = maxStreak;
+  document.getElementById('stat-record').textContent = recordDay;
+  document.getElementById('stat-record-session').textContent = recordSession;
+  document.getElementById('stat-avg').textContent = avg;
+
+  // Chart 30 derniers jours
+  drawChart(days);
+
+  // Liste
+  const list = document.getElementById('history-list');
+  if (!history.length) {
+    list.innerHTML = '<div class="history-row"><span class="h-date">Aucune séance enregistrée</span><span></span><span></span></div>';
+    return;
+  }
+  const recent = [...history].reverse().slice(0, 50);
+  list.innerHTML = recent.map(s => {
+    const d = new Date(s.date);
+    const dStr = d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return `<div class="history-row">
+      <div>
+        <div class="h-date">${dStr}</div>
+        <div class="h-mode">${s.mode}${s.rounds > 1 ? ' · ' + s.rounds + ' séries' : ''}</div>
+      </div>
+      <span class="h-mode" style="color:var(--muted)">${formatTime(s.duration)}</span>
+      <div class="h-count">${s.total}</div>
+    </div>`;
+  }).join('');
+}
+
+function drawChart(days) {
+  const svg = document.getElementById('chart-svg');
+  svg.innerHTML = '';
+
+  // 30 derniers jours
+  const today = new Date();
+  const labels = [];
+  const values = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = d.toISOString().slice(0, 10);
+    labels.push(ds);
+    values.push(days[ds] || 0);
+  }
+
+  const max = Math.max(1, ...values, state.options.dailyGoal || 0);
+  const w = 600, h = 140;
+  const pad = { l: 30, r: 8, t: 8, b: 22 };
+  const innerW = w - pad.l - pad.r;
+  const innerH = h - pad.t - pad.b;
+  const barW = innerW / 30 - 2;
+
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // Goal line
+  if (state.options.dailyGoal > 0) {
+    const y = pad.t + innerH * (1 - state.options.dailyGoal / max);
+    const line = document.createElementNS(ns, 'line');
+    line.setAttribute('x1', pad.l);
+    line.setAttribute('x2', w - pad.r);
+    line.setAttribute('y1', y);
+    line.setAttribute('y2', y);
+    line.setAttribute('stroke', 'var(--accent-2)');
+    line.setAttribute('stroke-dasharray', '3,3');
+    line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', w - pad.r - 4);
+    txt.setAttribute('y', y - 3);
+    txt.setAttribute('fill', 'var(--accent-2)');
+    txt.setAttribute('font-size', '9');
+    txt.setAttribute('text-anchor', 'end');
+    txt.setAttribute('font-family', 'JetBrains Mono, monospace');
+    txt.textContent = 'objectif ' + state.options.dailyGoal;
+    svg.appendChild(txt);
+  }
+
+  // Bars
+  values.forEach((v, i) => {
+    const x = pad.l + i * (innerW / 30) + 1;
+    const bh = v > 0 ? Math.max(2, innerH * (v / max)) : 0;
+    const y = pad.t + innerH - bh;
+    const rect = document.createElementNS(ns, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', y);
+    rect.setAttribute('width', barW);
+    rect.setAttribute('height', bh);
+    rect.setAttribute('fill', state.options.dailyGoal > 0 && v >= state.options.dailyGoal ? 'var(--ok)' : 'var(--accent)');
+    rect.setAttribute('rx', 1.5);
+    svg.appendChild(rect);
+  });
+
+  // Y axis labels (max + 0)
+  const yMax = document.createElementNS(ns, 'text');
+  yMax.setAttribute('x', pad.l - 4);
+  yMax.setAttribute('y', pad.t + 8);
+  yMax.setAttribute('fill', 'var(--muted)');
+  yMax.setAttribute('font-size', '9');
+  yMax.setAttribute('text-anchor', 'end');
+  yMax.setAttribute('font-family', 'JetBrains Mono, monospace');
+  yMax.textContent = max;
+  svg.appendChild(yMax);
+
+  const y0 = document.createElementNS(ns, 'text');
+  y0.setAttribute('x', pad.l - 4);
+  y0.setAttribute('y', pad.t + innerH);
+  y0.setAttribute('fill', 'var(--muted)');
+  y0.setAttribute('font-size', '9');
+  y0.setAttribute('text-anchor', 'end');
+  y0.setAttribute('font-family', 'JetBrains Mono, monospace');
+  y0.textContent = '0';
+  svg.appendChild(y0);
+
+  // X axis labels (J-30, J-15, aujourd'hui)
+  const xLabels = [
+    { i: 0, t: 'J-30' },
+    { i: 14, t: 'J-15' },
+    { i: 29, t: "auj." },
+  ];
+  xLabels.forEach(({i, t}) => {
+    const x = pad.l + i * (innerW / 30) + barW / 2;
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', x);
+    txt.setAttribute('y', h - 6);
+    txt.setAttribute('fill', 'var(--muted)');
+    txt.setAttribute('font-size', '9');
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('font-family', 'JetBrains Mono, monospace');
+    txt.textContent = t;
+    svg.appendChild(txt);
+  });
+}
+
+// ============================================================
+//   EXPORT / IMPORT / CLEAR
+// ============================================================
+document.getElementById('export-btn').addEventListener('click', () => {
+  const data = {
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    config: JSON.parse(localStorage.getItem(LS_CONFIG) || '{}'),
+    history: loadHistory(),
+    presets: loadPresets(),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `pompes-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✓ Données exportées');
+});
+
+document.getElementById('import-btn').addEventListener('click', () => {
+  document.getElementById('import-file').click();
+});
+document.getElementById('import-file').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.history) saveHistory(data.history);
+      if (data.presets) savePresets(data.presets);
+      if (data.config) localStorage.setItem(LS_CONFIG, JSON.stringify(data.config));
+      loadSettings();
+      applySettingsToUI();
+      applyTheme();
+      updateSummaries();
+      updatePyramidPreview();
+      renderPresets();
+      refreshTodayDashboard();
+      renderHistory();
+      showToast('✓ Données importées');
+    } catch(err) {
+      showToast('✗ Fichier invalide');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+  if (!confirm('Effacer tout l\'historique et les presets ? Cette action est irréversible.')) return;
+  localStorage.removeItem(LS_HISTORY);
+  localStorage.removeItem(LS_PRESETS);
+  renderPresets();
+  refreshTodayDashboard();
+  renderHistory();
+  showToast('✓ Données effacées');
+});
+
+// ============================================================
+//   UTILS
+// ============================================================
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+// ============================================================
+//   INIT
+// ============================================================
+loadSettings();
+applyTheme();
+applySettingsToUI();
+updateSummaries();
+updatePyramidPreview();
+renderPresets();
+refreshTodayDashboard();
+
+</script>
+</body>
+</html>
