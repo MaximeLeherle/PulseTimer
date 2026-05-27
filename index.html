@@ -91,60 +91,6 @@
   }
   .icon-btn:hover { border-color: var(--text); color: var(--text); }
 
-  /* ========== TODAY DASHBOARD ========== */
-  .today-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 24px;
-    position: relative;
-  }
-  .today-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    position: relative;
-  }
-  .today-label {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 2px;
-  }
-  .today-count {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 800;
-    font-size: 56px;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .today-count .small { font-size: 22px; color: var(--muted); margin-left: 6px; }
-  .today-bar {
-    height: 8px;
-    background: var(--panel);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-top: 8px;
-  }
-  .today-bar-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 999px;
-    transition: width 0.5s ease;
-  }
-  .today-bar-fill.complete { background: var(--ok); }
-  .today-streak {
-    margin-top: 12px;
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .today-streak strong { color: var(--text); font-weight: 600; }
-
   /* ========== EXERCISE FIELD ========== */
   .exercise-wrap {
     margin-bottom: 16px;
@@ -167,34 +113,41 @@
   }
   .exercise-wrap input::placeholder { color: var(--muted); }
 
-  /* ========== MODE TABS ========== */
-  .mode-tabs {
+  /* ========== MODE CARDS ========== */
+  .mode-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
     margin-bottom: 20px;
+  }
+  .mode-card {
+    padding: 14px 16px;
     background: var(--panel);
-    padding: 5px;
-    border-radius: 8px;
     border: 1px solid var(--line);
-  }
-  .mode-tab {
-    padding: 10px 4px;
-    background: transparent;
-    border: none;
-    color: var(--muted);
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1px;
+    border-radius: 10px;
     cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s;
-    text-transform: uppercase;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
   }
-  .mode-tab.active { background: var(--accent); color: #000; }
-  body.light .mode-tab.active { background: var(--accent); color: #fff; }
-  .mode-tab:not(.active):hover { color: var(--text); background: var(--panel-2); }
+  .mode-card:hover { border-color: var(--accent-2); }
+  .mode-card.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .mode-card-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .mode-card.active .mode-card-name { color: var(--accent); }
+  .mode-card-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
 
   /* ========== PANELS ========== */
   .panel {
@@ -320,39 +273,6 @@
   }
   .summary-box .item-unit { font-size: 11px; color: var(--muted); margin-left: 2px; }
 
-  /* Presets */
-  .preset-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 12px;
-  }
-  .preset-chip {
-    background: var(--panel-2);
-    border: 1px solid var(--line);
-    color: var(--text);
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .preset-chip:hover { border-color: var(--accent); }
-  .preset-chip .x {
-    color: var(--muted);
-    font-size: 14px;
-    line-height: 1;
-    padding: 0 2px;
-  }
-  .preset-chip .x:hover { color: var(--warn); }
-  .preset-empty {
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-  }
 
   /* Pyramide preview */
   .pyramid-preview {
@@ -765,18 +685,6 @@
     font-size: 32px;
     color: var(--accent);
   }
-  .pr-badge {
-    display: inline-block;
-    background: var(--accent);
-    color: var(--bg);
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 10px;
-    letter-spacing: 2px;
-    margin-top: 6px;
-    animation: pulse 1s infinite alternate;
-  }
-
   /* ========== DONE BREAKDOWN ========== */
   .breakdown-table {
     width: 100%;
@@ -801,86 +709,6 @@
   .breakdown-table .bd-hit { color: var(--ok); font-weight: 600; }
   .breakdown-table .bd-over { color: var(--over); }
   .breakdown-table .bd-under { color: var(--warn); }
-
-  /* ========== HISTORY ========== */
-  .history-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  .history-stat {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 12px 8px;
-    text-align: center;
-  }
-  .history-stat .v {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 26px;
-    color: var(--accent);
-    line-height: 1;
-  }
-  .history-stat .l {
-    font-size: 9px;
-    color: var(--muted);
-    letter-spacing: 1.5px;
-    margin-top: 4px;
-  }
-
-  .chart-wrap {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 16px;
-  }
-  .chart-title {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    margin-bottom: 12px;
-  }
-  #chart-svg { width: 100%; height: 140px; display: block; }
-
-  .history-list {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .history-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 10px;
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--line);
-    align-items: center;
-    font-size: 13px;
-  }
-  .history-row:last-child { border-bottom: none; }
-  .history-row .h-date { color: var(--muted); font-size: 11px; }
-  .history-row .h-mode {
-    color: var(--accent);
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-  .history-row .h-count {
-    font-family: 'Inter', sans-serif; font-weight: 700;
-    font-size: 22px;
-    color: var(--text);
-    text-align: right;
-  }
-
-  .data-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-top: 16px;
-  }
 
   /* Toast */
   .toast {
@@ -917,49 +745,6 @@
     color: var(--accent);
   }
 
-  /* Modal */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-backdrop.active { display: flex; }
-  .modal {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 24px;
-    width: 100%;
-    max-width: 400px;
-  }
-  .modal h3 {
-    font-family: 'Inter', sans-serif; font-weight: 700;
-    font-size: 22px;
-    letter-spacing: 2px;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-  .modal input[type="text"], .modal textarea {
-    width: 100%;
-    padding: 12px;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 14px;
-    margin-bottom: 14px;
-  }
-  .modal-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
 </style>
 </head>
 <body>
@@ -969,51 +754,41 @@
   <header>
     <h1>PULSETIMER</h1>
     <div class="header-actions">
-      <button class="icon-btn" id="theme-btn" title="Thème clair/sombre">🌓</button>
-      <button class="icon-btn" id="history-btn">📊 STATS</button>
+      <button class="icon-btn" id="theme-btn" title="Thème clair/sombre">Thème</button>
     </div>
   </header>
-
-  <!-- Today dashboard -->
-  <div class="today-card">
-    <div class="today-row">
-      <div>
-        <div class="today-label">AUJOURD'HUI</div>
-        <div class="today-count">
-          <span id="today-count">0</span><span class="small">/<span id="today-goal">100</span></span>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div class="today-label">SÉRIE</div>
-        <div class="today-count">
-          <span id="streak-days">0</span><span class="small">j 🔥</span>
-        </div>
-      </div>
-    </div>
-    <div class="today-bar">
-      <div class="today-bar-fill" id="today-bar-fill" style="width:0%"></div>
-    </div>
-    <div class="today-streak">
-      <span>Total : <strong id="total-all">0</strong> reps</span>
-      <span>Record : <strong id="record-day">0</strong> en 1 jour</span>
-    </div>
-  </div>
 
   <!-- Exercise field -->
   <div class="exercise-wrap">
     <input type="text" id="exercise-input" placeholder="Exercice : pompes, squats, burpees…" maxlength="40" autocomplete="off" spellcheck="false">
   </div>
 
-  <!-- Mode tabs -->
-  <div class="mode-tabs">
-    <button class="mode-tab active" data-mode="sprint">SPRINT</button>
-    <button class="mode-tab" data-mode="tabata">TABATA</button>
-    <button class="mode-tab" data-mode="series">SÉRIES</button>
-    <button class="mode-tab" data-mode="random">ALÉA.</button>
-    <button class="mode-tab" data-mode="emom">EMOM</button>
-  </div>
-  <div class="mode-tabs" style="grid-template-columns: 1fr; margin-top:-12px;">
-    <button class="mode-tab" data-mode="pyramid">PYRAMIDE</button>
+  <!-- Mode cards -->
+  <div class="mode-grid">
+    <button class="mode-card active" data-mode="sprint">
+      <div class="mode-card-name">Sprint</div>
+      <div class="mode-card-desc">Un effort continu, un objectif de reps ou un temps fixe.</div>
+    </button>
+    <button class="mode-card" data-mode="tabata">
+      <div class="mode-card-name">Tabata</div>
+      <div class="mode-card-desc">Effort / repos en alternance. Format classique 20s / 10s.</div>
+    </button>
+    <button class="mode-card" data-mode="series">
+      <div class="mode-card-name">Séries</div>
+      <div class="mode-card-desc">N séries avec repos entre chaque. Objectif libre ou fixe.</div>
+    </button>
+    <button class="mode-card" data-mode="random">
+      <div class="mode-card-name">Aléatoire</div>
+      <div class="mode-card-desc">Tirage au sort entre min et max à chaque série. Surprise !</div>
+    </button>
+    <button class="mode-card" data-mode="emom">
+      <div class="mode-card-name">EMOM</div>
+      <div class="mode-card-desc">Quota à tenir chaque minute. Le reste du temps = repos.</div>
+    </button>
+    <button class="mode-card" data-mode="pyramid">
+      <div class="mode-card-name">Pyramide</div>
+      <div class="mode-card-desc">Reps croissants jusqu'au sommet, puis redescente.</div>
+    </button>
   </div>
 
   <!-- ========== SPRINT ========== -->
@@ -1163,28 +938,15 @@
     <div class="summary-box" id="summary-pyramid"></div>
   </div>
 
-  <!-- ========== PRESETS ========== -->
-  <div class="panel">
-    <h2>Mes presets</h2>
-    <div class="preset-row" id="preset-row">
-      <span class="preset-empty">Aucun preset enregistré.</span>
-    </div>
-    <button class="small-btn" id="save-preset-btn" style="width:100%; padding:12px;">💾 SAUVEGARDER LA CONFIG ACTUELLE</button>
-  </div>
-
   <!-- ========== OPTIONS ========== -->
   <div class="panel">
-    <h2>Options générales</h2>
-    <div class="field">
-      <label>Objectif quotidien (reps)</label>
-      <input type="number" id="opt-daily-goal" min="0" value="100">
-    </div>
+    <h2>Options</h2>
     <div class="field">
       <label>Compte à rebours avant le départ (3-2-1)</label>
       <div class="toggle on" data-opt="countdown"></div>
     </div>
     <div class="field">
-      <label>Sons (bips synthétisés)</label>
+      <label>Sons</label>
       <div class="toggle on" data-opt="sound"></div>
     </div>
     <div class="field">
@@ -1192,11 +954,11 @@
       <div class="toggle on" data-opt="lastSeconds"></div>
     </div>
     <div class="field">
-      <label>Annonces vocales ("3, 2, 1, partez", "repos"...)</label>
+      <label>Annonces vocales</label>
       <div class="toggle" data-opt="voice"></div>
     </div>
     <div class="field">
-      <label>Vibration sur mobile</label>
+      <label>Vibration</label>
       <div class="toggle on" data-opt="vibrate"></div>
     </div>
     <div class="field">
@@ -1204,21 +966,16 @@
       <div class="toggle on" data-opt="wakeLock"></div>
     </div>
     <div class="field">
-      <label>Volume des bips (%)</label>
+      <label>Volume (%)</label>
       <input type="number" id="opt-volume" min="0" max="100" value="60">
     </div>
     <div class="field">
-      <label>Estim. temps par pompe (mode Séries sans cap, sec)</label>
+      <label>Estimation durée par rep (sec)</label>
       <input type="number" id="opt-rep-estim" min="1" max="10" value="2">
     </div>
   </div>
 
-  <button class="start-btn" id="start-btn">▶ DÉMARRER</button>
-
-  <p class="hint" style="text-align:center; margin-top:20px;">
-    💾 Tout est sauvegardé dans ton navigateur (localStorage).<br>
-    📱 Sur téléphone : ajoute la page à l'écran d'accueil pour un accès rapide.
-  </p>
+  <button class="start-btn" id="start-btn">Démarrer</button>
 
 </div>
 
@@ -1311,7 +1068,6 @@
     <div class="done-card">
       <h2>BRAVO</h2>
       <p style="color:var(--muted); letter-spacing:1px;" id="done-subtitle">Séance terminée</p>
-      <div id="pr-badges" style="margin-top: 8px;"></div>
       <div class="done-stats">
         <div class="stat-card">
           <div class="stat-label">REPS TOTALES</div>
@@ -1340,54 +1096,6 @@
   </div>
 </div>
 
-<!-- ========== HISTORY SCREEN ========== -->
-<div class="full-screen" id="history-screen" style="overflow-y:auto; padding-bottom:40px;">
-  <div class="timer-header">
-    <span class="timer-phase">HISTORIQUE & STATS</span>
-    <button class="close-btn" id="history-close-btn">✕ FERMER</button>
-  </div>
-  <div style="max-width: 720px; margin: 20px auto 0; width:100%;">
-
-    <div class="history-stats">
-      <div class="history-stat"><div class="v" id="stat-total">0</div><div class="l">TOTAL REPS</div></div>
-      <div class="history-stat"><div class="v" id="stat-sessions">0</div><div class="l">SÉANCES</div></div>
-      <div class="history-stat"><div class="v" id="stat-streak">0</div><div class="l">STREAK MAX</div></div>
-      <div class="history-stat"><div class="v" id="stat-record">0</div><div class="l">RECORD JOUR</div></div>
-      <div class="history-stat"><div class="v" id="stat-record-session">0</div><div class="l">RECORD SÉANCE</div></div>
-      <div class="history-stat"><div class="v" id="stat-avg">0</div><div class="l">MOY. / SÉANCE</div></div>
-    </div>
-
-    <div class="chart-wrap">
-      <div class="chart-title">30 DERNIERS JOURS</div>
-      <svg id="chart-svg" viewBox="0 0 600 140" preserveAspectRatio="none"></svg>
-    </div>
-
-    <div class="chart-title" style="margin-bottom:12px; padding: 0 4px; font-size:11px; color:var(--muted); letter-spacing:2px;">DERNIÈRES SÉANCES</div>
-    <div class="history-list" id="history-list">
-      <div class="history-row"><span class="h-date">Aucune séance enregistrée</span><span></span><span></span></div>
-    </div>
-
-    <div class="data-actions">
-      <button class="small-btn" id="export-btn">📤 EXPORTER</button>
-      <button class="small-btn" id="import-btn">📥 IMPORTER</button>
-      <button class="small-btn" id="clear-btn" style="border-color:var(--warn); color:var(--warn);">🗑 EFFACER</button>
-    </div>
-    <input type="file" id="import-file" accept=".json" style="display:none">
-
-  </div>
-</div>
-
-<!-- ========== MODAL (preset name, etc) ========== -->
-<div class="modal-backdrop" id="modal-backdrop">
-  <div class="modal">
-    <h3 id="modal-title">Sauvegarder le preset</h3>
-    <input type="text" id="modal-input" placeholder="Nom du preset...">
-    <div class="modal-actions">
-      <button class="small-btn" id="modal-cancel">Annuler</button>
-      <button class="small-btn" id="modal-ok" style="background:var(--accent); color:var(--bg); border-color:var(--accent);">OK</button>
-    </div>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 
@@ -1405,7 +1113,6 @@ const DEFAULT_OPTIONS = {
   vibrate: true,
   wakeLock: true,
   volume: 60,
-  dailyGoal: 100,
   repEstim: 2,
   pyramidUpDown: true,
   randomSurprise: false,
@@ -1452,8 +1159,6 @@ const state = {
 //   STORAGE
 // ============================================================
 const LS_CONFIG = 'pompes-config-v2';
-const LS_HISTORY = 'pompes-history-v2';
-const LS_PRESETS = 'pompes-presets-v2';
 
 function saveSettings() {
   try {
@@ -1479,21 +1184,6 @@ function loadSettings() {
   } catch(e) {}
 }
 
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(LS_HISTORY) || '[]'); }
-  catch(e) { return []; }
-}
-function saveHistory(h) {
-  try { localStorage.setItem(LS_HISTORY, JSON.stringify(h)); } catch(e) {}
-}
-
-function loadPresets() {
-  try { return JSON.parse(localStorage.getItem(LS_PRESETS) || '[]'); }
-  catch(e) { return []; }
-}
-function savePresets(p) {
-  try { localStorage.setItem(LS_PRESETS, JSON.stringify(p)); } catch(e) {}
-}
 
 // ============================================================
 //   AUDIO
@@ -1569,15 +1259,14 @@ document.addEventListener('visibilitychange', () => {
 //   UI : ÉCRANS
 // ============================================================
 const screens = {
-  main:    document.getElementById('main-screen'),
-  timer:   document.getElementById('timer-screen'),
-  input:   document.getElementById('input-screen'),
-  done:    document.getElementById('done-screen'),
-  history: document.getElementById('history-screen'),
+  main:  document.getElementById('main-screen'),
+  timer: document.getElementById('timer-screen'),
+  input: document.getElementById('input-screen'),
+  done:  document.getElementById('done-screen'),
 };
 function showScreen(name) {
   screens.main.style.display = (name === 'main') ? '' : 'none';
-  ['timer','input','done','history'].forEach(s => {
+  ['timer','input','done'].forEach(s => {
     screens[s].classList.toggle('active', name === s);
   });
 }
@@ -1597,12 +1286,12 @@ document.getElementById('theme-btn').addEventListener('click', () => {
 });
 
 // ============================================================
-//   MODE TABS
+//   MODE CARDS
 // ============================================================
-document.querySelectorAll('.mode-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    state.mode = tab.dataset.mode;
-    document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === state.mode));
+document.querySelectorAll('.mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    state.mode = card.dataset.mode;
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.toggle('active', c.dataset.mode === state.mode));
     document.querySelectorAll('.mode-config').forEach(c =>
       c.classList.toggle('active', c.id === 'config-' + state.mode));
     saveSettings();
@@ -1651,11 +1340,6 @@ configBindings.forEach(([id, mode, key]) => {
 document.getElementById('opt-volume').addEventListener('input', e => {
   state.options.volume = parseInt(e.target.value) || 0; saveSettings();
 });
-document.getElementById('opt-daily-goal').addEventListener('input', e => {
-  state.options.dailyGoal = parseInt(e.target.value) || 0;
-  saveSettings();
-  refreshTodayDashboard();
-});
 document.getElementById('opt-rep-estim').addEventListener('input', e => {
   state.options.repEstim = parseInt(e.target.value) || 2;
   saveSettings();
@@ -1681,15 +1365,14 @@ document.getElementById('exercise-input').addEventListener('input', e => {
 
 function applySettingsToUI() {
   document.getElementById('exercise-input').value = state.exercise || '';
-  document.querySelectorAll('.mode-tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.mode === state.mode));
+  document.querySelectorAll('.mode-card').forEach(c =>
+    c.classList.toggle('active', c.dataset.mode === state.mode));
   document.querySelectorAll('.mode-config').forEach(c =>
     c.classList.toggle('active', c.id === 'config-' + state.mode));
   configBindings.forEach(([id, mode, key]) => {
     document.getElementById(id).value = state.config[mode][key];
   });
   document.getElementById('opt-volume').value = state.options.volume;
-  document.getElementById('opt-daily-goal').value = state.options.dailyGoal;
   document.getElementById('opt-rep-estim').value = state.options.repEstim;
   document.querySelectorAll('.toggle').forEach(t => {
     t.classList.toggle('on', !!state.options[t.dataset.opt]);
@@ -1822,90 +1505,6 @@ function updateSummaries() {
   ]);
 }
 
-// ============================================================
-//   PRESETS
-// ============================================================
-function renderPresets() {
-  const presets = loadPresets();
-  const wrap = document.getElementById('preset-row');
-  if (!presets.length) {
-    wrap.innerHTML = '<span class="preset-empty">Aucun preset enregistré.</span>';
-    return;
-  }
-  wrap.innerHTML = '';
-  presets.forEach((p, idx) => {
-    const chip = document.createElement('div');
-    chip.className = 'preset-chip';
-    chip.innerHTML = `<span data-load="${idx}">${escapeHtml(p.name)} · ${p.mode.toUpperCase()}</span><span class="x" data-del="${idx}">✕</span>`;
-    wrap.appendChild(chip);
-  });
-  wrap.querySelectorAll('[data-load]').forEach(el => {
-    el.addEventListener('click', () => loadPreset(parseInt(el.dataset.load)));
-  });
-  wrap.querySelectorAll('[data-del]').forEach(el => {
-    el.addEventListener('click', e => {
-      e.stopPropagation();
-      const presets = loadPresets();
-      presets.splice(parseInt(el.dataset.del), 1);
-      savePresets(presets);
-      renderPresets();
-    });
-  });
-}
-function loadPreset(idx) {
-  const presets = loadPresets();
-  const p = presets[idx];
-  if (!p) return;
-  state.mode = p.mode;
-  state.config[p.mode] = {...p.config};
-  if (p.options) Object.assign(state.options, p.options);
-  saveSettings();
-  applySettingsToUI();
-  updateSummaries();
-  updatePyramidPreview();
-  showToast(`✓ Preset "${p.name}" chargé`);
-}
-document.getElementById('save-preset-btn').addEventListener('click', () => {
-  showModal('Nom du preset', '', name => {
-    if (!name || !name.trim()) return;
-    const presets = loadPresets();
-    presets.push({
-      name: name.trim().slice(0, 40),
-      mode: state.mode,
-      config: {...state.config[state.mode]},
-      // on ne sauvegarde pas pyramidUpDown/repEstim ici pour rester simple
-    });
-    savePresets(presets);
-    renderPresets();
-    showToast('✓ Preset sauvegardé');
-  });
-});
-
-// ============================================================
-//   MODAL
-// ============================================================
-let modalCallback = null;
-function showModal(title, defaultValue, cb) {
-  document.getElementById('modal-title').textContent = title;
-  document.getElementById('modal-input').value = defaultValue || '';
-  modalCallback = cb;
-  document.getElementById('modal-backdrop').classList.add('active');
-  setTimeout(() => document.getElementById('modal-input').focus(), 100);
-}
-document.getElementById('modal-cancel').addEventListener('click', () => {
-  document.getElementById('modal-backdrop').classList.remove('active');
-  modalCallback = null;
-});
-document.getElementById('modal-ok').addEventListener('click', () => {
-  const val = document.getElementById('modal-input').value;
-  document.getElementById('modal-backdrop').classList.remove('active');
-  if (modalCallback) modalCallback(val);
-  modalCallback = null;
-});
-document.getElementById('modal-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('modal-ok').click();
-  else if (e.key === 'Escape') document.getElementById('modal-cancel').click();
-});
 
 // ============================================================
 //   TOAST
@@ -1927,8 +1526,8 @@ document.getElementById('start-btn').addEventListener('click', () => {
   startSession();
 });
 document.getElementById('close-btn').addEventListener('click', () => abortSession());
-document.getElementById('done-close-btn').addEventListener('click', () => { showScreen('main'); refreshTodayDashboard(); });
-document.getElementById('done-finish-btn').addEventListener('click', () => { showScreen('main'); refreshTodayDashboard(); });
+document.getElementById('done-close-btn').addEventListener('click', () => showScreen('main'));
+document.getElementById('done-finish-btn').addEventListener('click', () => showScreen('main'));
 document.getElementById('done-restart-btn').addEventListener('click', () => { showScreen('main'); setTimeout(startSession, 100); });
 
 function buildRoundTargets() {
@@ -1998,7 +1597,6 @@ function abortSession() {
   cancelAnimationFrame(state.rafId);
   releaseWakeLock();
   showScreen('main');
-  refreshTodayDashboard();
 }
 
 // ============================================================
@@ -2421,43 +2019,11 @@ function finishSession() {
   const rounds = state.roundCounts.length;
   const best = rounds ? Math.max(...state.roundCounts) : 0;
 
-  // Sauvegarder dans l'historique
-  const session = {
-    date: new Date().toISOString(),
-    mode: state.mode,
-    total: totalCount,
-    rounds: rounds,
-    duration: totalDur,
-    best: best,
-    counts: [...state.roundCounts],
-    targets: [...state.roundTargets],
-  };
-  const history = loadHistory();
-  history.push(session);
-  saveHistory(history);
-
-  // PR detection
-  const prevRecord = history.slice(0, -1).reduce((m, s) => Math.max(m, s.total), 0);
-  const isSessionPR = totalCount > prevRecord && totalCount > 0;
-
-  // Today PR
-  const today = new Date().toISOString().slice(0, 10);
-  const todaySessions = history.filter(s => s.date.slice(0, 10) === today);
-  const todayTotal = todaySessions.reduce((a, s) => a + s.total, 0);
-  const prevDays = {};
-  history.slice(0, -1).forEach(s => {
-    const d = s.date.slice(0, 10);
-    prevDays[d] = (prevDays[d] || 0) + s.total;
-  });
-  const prevDayRecord = Math.max(0, ...Object.values(prevDays));
-  const isDayPR = todayTotal > prevDayRecord && todayTotal > 0;
-
   document.getElementById('done-total').textContent = totalCount;
   document.getElementById('done-rounds').textContent = rounds;
   document.getElementById('done-duration').textContent = formatTime(totalDur);
   document.getElementById('done-best').textContent = best;
 
-  // Breakdown par série
   const bd = document.getElementById('done-breakdown');
   if (state.roundCounts.length > 1) {
     const rows = state.roundCounts.map((c, i) => {
@@ -2483,323 +2049,9 @@ function finishSession() {
     bd.innerHTML = '';
   }
 
-  const prBadges = document.getElementById('pr-badges');
-  prBadges.innerHTML = '';
-  if (isSessionPR) prBadges.innerHTML += '<span class="pr-badge">🏆 RECORD SÉANCE</span> ';
-  if (isDayPR) prBadges.innerHTML += '<span class="pr-badge">🔥 RECORD JOUR</span>';
-
-  // Progression vers objectif quotidien
-  const goal = state.options.dailyGoal;
-  const sub = document.getElementById('done-subtitle');
-  if (goal > 0) {
-    if (todayTotal >= goal) sub.innerHTML = `🎯 Objectif quotidien atteint ! (${todayTotal}/${goal})`;
-    else sub.innerHTML = `Plus que <strong style="color:var(--accent)">${goal - todayTotal}</strong> reps pour ton objectif du jour`;
-  } else {
-    sub.textContent = 'Séance terminée';
-  }
-
   showScreen('done');
 }
 
-// ============================================================
-//   TODAY DASHBOARD
-// ============================================================
-function refreshTodayDashboard() {
-  const history = loadHistory();
-  const today = new Date().toISOString().slice(0, 10);
-  const todayTotal = history
-    .filter(s => s.date.slice(0, 10) === today)
-    .reduce((a, s) => a + s.total, 0);
-
-  const goal = state.options.dailyGoal || 0;
-  document.getElementById('today-count').textContent = todayTotal;
-  document.getElementById('today-goal').textContent = goal;
-
-  const fill = document.getElementById('today-bar-fill');
-  if (goal > 0) {
-    const pct = Math.min(100, (todayTotal / goal) * 100);
-    fill.style.width = pct + '%';
-    fill.classList.toggle('complete', todayTotal >= goal);
-  } else {
-    fill.style.width = '0%';
-  }
-
-  // Streak (jours consécutifs avec au moins 1 pompe)
-  const days = {};
-  history.forEach(s => {
-    const d = s.date.slice(0, 10);
-    days[d] = (days[d] || 0) + s.total;
-  });
-  let streak = 0;
-  const cursor = new Date();
-  while (true) {
-    const ds = cursor.toISOString().slice(0, 10);
-    if (days[ds] && days[ds] > 0) {
-      streak++;
-      cursor.setDate(cursor.getDate() - 1);
-    } else {
-      // si c'est aujourd'hui mais 0 pompes, on regarde quand même hier
-      if (streak === 0 && ds === today) {
-        cursor.setDate(cursor.getDate() - 1);
-        continue;
-      }
-      break;
-    }
-  }
-  document.getElementById('streak-days').textContent = streak;
-
-  // Total all-time + record day
-  const totalAll = Object.values(days).reduce((a, b) => a + b, 0);
-  const recordDay = Math.max(0, ...Object.values(days));
-  document.getElementById('total-all').textContent = totalAll;
-  document.getElementById('record-day').textContent = recordDay;
-}
-
-// ============================================================
-//   HISTORY SCREEN
-// ============================================================
-document.getElementById('history-btn').addEventListener('click', () => {
-  renderHistory();
-  showScreen('history');
-});
-document.getElementById('history-close-btn').addEventListener('click', () => showScreen('main'));
-
-function renderHistory() {
-  const history = loadHistory();
-
-  // Stats
-  const days = {};
-  history.forEach(s => {
-    const d = s.date.slice(0, 10);
-    days[d] = (days[d] || 0) + s.total;
-  });
-  const totalAll = Object.values(days).reduce((a, b) => a + b, 0);
-  const sessions = history.length;
-  const recordDay = Math.max(0, ...Object.values(days));
-  const recordSession = history.reduce((m, s) => Math.max(m, s.total), 0);
-  const avg = sessions > 0 ? Math.round(history.reduce((a, s) => a + s.total, 0) / sessions) : 0;
-
-  // Streak max (calcule la plus longue streak de tous les temps)
-  const sortedDays = Object.keys(days).sort();
-  let maxStreak = 0, curStreak = 0, prevDate = null;
-  sortedDays.forEach(d => {
-    if (days[d] <= 0) { curStreak = 0; prevDate = null; return; }
-    if (prevDate) {
-      const diff = (new Date(d) - new Date(prevDate)) / (1000 * 60 * 60 * 24);
-      if (diff === 1) curStreak++;
-      else curStreak = 1;
-    } else curStreak = 1;
-    maxStreak = Math.max(maxStreak, curStreak);
-    prevDate = d;
-  });
-
-  document.getElementById('stat-total').textContent = totalAll;
-  document.getElementById('stat-sessions').textContent = sessions;
-  document.getElementById('stat-streak').textContent = maxStreak;
-  document.getElementById('stat-record').textContent = recordDay;
-  document.getElementById('stat-record-session').textContent = recordSession;
-  document.getElementById('stat-avg').textContent = avg;
-
-  // Chart 30 derniers jours
-  drawChart(days);
-
-  // Liste
-  const list = document.getElementById('history-list');
-  if (!history.length) {
-    list.innerHTML = '<div class="history-row"><span class="h-date">Aucune séance enregistrée</span><span></span><span></span></div>';
-    return;
-  }
-  const recent = [...history].reverse().slice(0, 50);
-  list.innerHTML = recent.map(s => {
-    const d = new Date(s.date);
-    const dStr = d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-    return `<div class="history-row">
-      <div>
-        <div class="h-date">${dStr}</div>
-        <div class="h-mode">${s.mode}${s.rounds > 1 ? ' · ' + s.rounds + ' séries' : ''}</div>
-      </div>
-      <span class="h-mode" style="color:var(--muted)">${formatTime(s.duration)}</span>
-      <div class="h-count">${s.total}</div>
-    </div>`;
-  }).join('');
-}
-
-function drawChart(days) {
-  const svg = document.getElementById('chart-svg');
-  svg.innerHTML = '';
-
-  // 30 derniers jours
-  const today = new Date();
-  const labels = [];
-  const values = [];
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    const ds = d.toISOString().slice(0, 10);
-    labels.push(ds);
-    values.push(days[ds] || 0);
-  }
-
-  const max = Math.max(1, ...values, state.options.dailyGoal || 0);
-  const w = 600, h = 140;
-  const pad = { l: 30, r: 8, t: 8, b: 22 };
-  const innerW = w - pad.l - pad.r;
-  const innerH = h - pad.t - pad.b;
-  const barW = innerW / 30 - 2;
-
-  const ns = 'http://www.w3.org/2000/svg';
-
-  // Goal line
-  if (state.options.dailyGoal > 0) {
-    const y = pad.t + innerH * (1 - state.options.dailyGoal / max);
-    const line = document.createElementNS(ns, 'line');
-    line.setAttribute('x1', pad.l);
-    line.setAttribute('x2', w - pad.r);
-    line.setAttribute('y1', y);
-    line.setAttribute('y2', y);
-    line.setAttribute('stroke', 'var(--accent-2)');
-    line.setAttribute('stroke-dasharray', '3,3');
-    line.setAttribute('stroke-width', '1');
-    svg.appendChild(line);
-
-    const txt = document.createElementNS(ns, 'text');
-    txt.setAttribute('x', w - pad.r - 4);
-    txt.setAttribute('y', y - 3);
-    txt.setAttribute('fill', 'var(--accent-2)');
-    txt.setAttribute('font-size', '9');
-    txt.setAttribute('text-anchor', 'end');
-    txt.setAttribute('font-family', 'JetBrains Mono, monospace');
-    txt.textContent = 'objectif ' + state.options.dailyGoal;
-    svg.appendChild(txt);
-  }
-
-  // Bars
-  values.forEach((v, i) => {
-    const x = pad.l + i * (innerW / 30) + 1;
-    const bh = v > 0 ? Math.max(2, innerH * (v / max)) : 0;
-    const y = pad.t + innerH - bh;
-    const rect = document.createElementNS(ns, 'rect');
-    rect.setAttribute('x', x);
-    rect.setAttribute('y', y);
-    rect.setAttribute('width', barW);
-    rect.setAttribute('height', bh);
-    rect.setAttribute('fill', state.options.dailyGoal > 0 && v >= state.options.dailyGoal ? 'var(--ok)' : 'var(--accent)');
-    rect.setAttribute('rx', 1.5);
-    svg.appendChild(rect);
-  });
-
-  // Y axis labels (max + 0)
-  const yMax = document.createElementNS(ns, 'text');
-  yMax.setAttribute('x', pad.l - 4);
-  yMax.setAttribute('y', pad.t + 8);
-  yMax.setAttribute('fill', 'var(--muted)');
-  yMax.setAttribute('font-size', '9');
-  yMax.setAttribute('text-anchor', 'end');
-  yMax.setAttribute('font-family', 'JetBrains Mono, monospace');
-  yMax.textContent = max;
-  svg.appendChild(yMax);
-
-  const y0 = document.createElementNS(ns, 'text');
-  y0.setAttribute('x', pad.l - 4);
-  y0.setAttribute('y', pad.t + innerH);
-  y0.setAttribute('fill', 'var(--muted)');
-  y0.setAttribute('font-size', '9');
-  y0.setAttribute('text-anchor', 'end');
-  y0.setAttribute('font-family', 'JetBrains Mono, monospace');
-  y0.textContent = '0';
-  svg.appendChild(y0);
-
-  // X axis labels (J-30, J-15, aujourd'hui)
-  const xLabels = [
-    { i: 0, t: 'J-30' },
-    { i: 14, t: 'J-15' },
-    { i: 29, t: "auj." },
-  ];
-  xLabels.forEach(({i, t}) => {
-    const x = pad.l + i * (innerW / 30) + barW / 2;
-    const txt = document.createElementNS(ns, 'text');
-    txt.setAttribute('x', x);
-    txt.setAttribute('y', h - 6);
-    txt.setAttribute('fill', 'var(--muted)');
-    txt.setAttribute('font-size', '9');
-    txt.setAttribute('text-anchor', 'middle');
-    txt.setAttribute('font-family', 'JetBrains Mono, monospace');
-    txt.textContent = t;
-    svg.appendChild(txt);
-  });
-}
-
-// ============================================================
-//   EXPORT / IMPORT / CLEAR
-// ============================================================
-document.getElementById('export-btn').addEventListener('click', () => {
-  const data = {
-    version: 2,
-    exportedAt: new Date().toISOString(),
-    config: JSON.parse(localStorage.getItem(LS_CONFIG) || '{}'),
-    history: loadHistory(),
-    presets: loadPresets(),
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `pulsetimer-${new Date().toISOString().slice(0,10)}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('✓ Données exportées');
-});
-
-document.getElementById('import-btn').addEventListener('click', () => {
-  document.getElementById('import-file').click();
-});
-document.getElementById('import-file').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      if (data.history) saveHistory(data.history);
-      if (data.presets) savePresets(data.presets);
-      if (data.config) localStorage.setItem(LS_CONFIG, JSON.stringify(data.config));
-      loadSettings();
-      applySettingsToUI();
-      applyTheme();
-      updateSummaries();
-      updatePyramidPreview();
-      renderPresets();
-      refreshTodayDashboard();
-      renderHistory();
-      showToast('✓ Données importées');
-    } catch(err) {
-      showToast('✗ Fichier invalide');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
-
-document.getElementById('clear-btn').addEventListener('click', () => {
-  if (!confirm('Effacer tout l\'historique et les presets ? Cette action est irréversible.')) return;
-  localStorage.removeItem(LS_HISTORY);
-  localStorage.removeItem(LS_PRESETS);
-  renderPresets();
-  refreshTodayDashboard();
-  renderHistory();
-  showToast('✓ Données effacées');
-});
-
-// ============================================================
-//   UTILS
-// ============================================================
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
 
 // ============================================================
 //   INIT
@@ -2809,8 +2061,6 @@ applyTheme();
 applySettingsToUI();
 updateSummaries();
 updatePyramidPreview();
-renderPresets();
-refreshTodayDashboard();
 
 </script>
 </body>
