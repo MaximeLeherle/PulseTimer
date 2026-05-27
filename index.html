@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0a0a0a">
-<title>Défi Pompes — Timer</title>
+<title>PulseTimer</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap');
 
@@ -855,7 +855,7 @@
 <div class="container" id="main-screen">
 
   <header>
-    <h1>DÉFI POMPES</h1>
+    <h1>PULSETIMER</h1>
     <div class="header-actions">
       <button class="icon-btn" id="theme-btn" title="Thème clair/sombre">🌓</button>
       <button class="icon-btn" id="history-btn">📊 STATS</button>
@@ -901,9 +901,9 @@
 
   <!-- ========== SPRINT ========== -->
   <div class="panel mode-config active" id="config-sprint">
-    <h2>Sprint — X pompes en Y secondes</h2>
+    <h2>Sprint — X reps en Y secondes</h2>
     <div class="field">
-      <label>Objectif (nombre de pompes)</label>
+      <label>Objectif (nombre de reps)</label>
       <input type="number" id="sprint-target" min="1" value="20">
     </div>
     <div class="field">
@@ -930,7 +930,7 @@
       <input type="number" id="tabata-rounds" min="1" value="8">
     </div>
     <div class="field">
-      <label>Objectif pompes / série (0 = libre)</label>
+      <label>Objectif reps / série (0 = libre)</label>
       <input type="number" id="tabata-target" min="0" value="0">
     </div>
     <p class="hint">Format classique : 20s effort / 10s repos × 8 = 4 minutes.</p>
@@ -945,7 +945,7 @@
       <input type="number" id="series-rounds" min="1" value="5">
     </div>
     <div class="field">
-      <label>Pompes par série (objectif)</label>
+      <label>Reps par série (objectif)</label>
       <input type="number" id="series-reps" min="1" value="10">
     </div>
     <div class="field">
@@ -964,7 +964,7 @@
   <div class="panel mode-config" id="config-random">
     <h2>Aléatoire — Tirage entre 2 nombres</h2>
     <div class="field">
-      <label>Pompes par série (min - max)</label>
+      <label>Reps par série (min — max)</label>
       <div class="field-row">
         <input type="number" id="random-min" min="1" value="5" style="width:70px">
         <span class="field-sep">–</span>
@@ -1003,7 +1003,7 @@
   <div class="panel mode-config" id="config-emom">
     <h2>EMOM — Every Minute On the Minute</h2>
     <div class="field">
-      <label>Pompes par minute</label>
+      <label>Reps par minute</label>
       <input type="number" id="emom-reps" min="1" value="10">
     </div>
     <div class="field">
@@ -1152,7 +1152,7 @@
   </div>
   <div class="timer-main">
     <div class="input-card">
-      <div class="input-target-label">COMBIEN DE POMPES ?</div>
+      <div class="input-target-label">COMBIEN DE REPS ?</div>
       <div class="input-target-value" id="input-target-value"></div>
       <input type="number" id="input-count" class="big-input" min="0" value="0">
       <div class="quick-buttons">
@@ -1183,7 +1183,7 @@
       <div id="pr-badges" style="margin-top: 8px;"></div>
       <div class="done-stats">
         <div class="stat-card">
-          <div class="stat-label">POMPES TOTALES</div>
+          <div class="stat-label">REPS TOTALES</div>
           <div class="stat-value" id="done-total">0</div>
         </div>
         <div class="stat-card">
@@ -1216,7 +1216,7 @@
   <div style="max-width: 720px; margin: 20px auto 0; width:100%;">
 
     <div class="history-stats">
-      <div class="history-stat"><div class="v" id="stat-total">0</div><div class="l">TOTAL POMPES</div></div>
+      <div class="history-stat"><div class="v" id="stat-total">0</div><div class="l">TOTAL REPS</div></div>
       <div class="history-stat"><div class="v" id="stat-sessions">0</div><div class="l">SÉANCES</div></div>
       <div class="history-stat"><div class="v" id="stat-streak">0</div><div class="l">STREAK MAX</div></div>
       <div class="history-stat"><div class="v" id="stat-record">0</div><div class="l">RECORD JOUR</div></div>
@@ -1927,9 +1927,9 @@ function startWorkPhase() {
   const isSurprise = m === 'random' && state.options.randomSurprise;
   const tgEl = document.getElementById('effort-target');
   if (isSurprise) {
-    tgEl.innerHTML = `<strong>?</strong> POMPES 🎲`;
+    tgEl.innerHTML = `<strong>?</strong> REPS 🎲`;
   } else if (target > 0) {
-    tgEl.innerHTML = `<strong>${target}</strong> POMPES`;
+    tgEl.innerHTML = `<strong>${target}</strong> REPS`;
     if (m === 'random') tgEl.innerHTML += ' 🎲';
   } else {
     tgEl.innerHTML = 'LIBRE';
