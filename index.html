@@ -69,24 +69,27 @@
     border-bottom: 1px solid var(--line);
   }
   header h1 {
-    font-family: 'Inter', sans-serif; font-weight: 700;
-    font-size: 32px;
-    letter-spacing: 3px;
-    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 2px;
+    color: var(--text);
   }
   .header-actions { display: flex; gap: 8px; }
   .icon-btn {
-    background: var(--panel);
+    background: transparent;
     border: 1px solid var(--line);
-    color: var(--text);
-    padding: 8px 12px;
-    border-radius: 6px;
+    color: var(--muted);
+    padding: 8px 14px;
+    border-radius: 8px;
     cursor: pointer;
-    font-family: inherit;
-    font-size: 11px;
-    letter-spacing: 1px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.15s, border-color 0.15s;
   }
-  .icon-btn:hover { border-color: var(--accent); }
+  .icon-btn:hover { border-color: var(--text); color: var(--text); }
 
   /* ========== TODAY DASHBOARD ========== */
   .today-card {
@@ -648,16 +651,21 @@
     flex-shrink: 0;
   }
   .timer-footer button {
-    padding: 16px;
+    padding: 18px 12px;
+    min-height: 56px;
     background: var(--panel);
     border: 1px solid var(--line);
     color: var(--text);
-    font-family: 'Inter', sans-serif; font-weight: 700;
-    font-size: 18px;
-    letter-spacing: 2px;
-    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 10px;
     cursor: pointer;
+    transition: opacity 0.15s;
   }
+  .timer-footer button:hover { opacity: 0.75; }
   .timer-footer button.danger { border-color: var(--warn); color: var(--warn); }
   .timer-footer button.primary {
     background: var(--accent);
