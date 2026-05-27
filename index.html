@@ -592,6 +592,49 @@
     animation: pulse 0.8s infinite alternate;
   }
 
+  /* ========== TAP COUNTER ========== */
+  #tap-btn {
+    width: min(72vw, 280px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.08s, border-color 0.1s;
+    gap: 4px;
+    margin: 0 auto;
+  }
+  #tap-btn:active { transform: scale(0.94); border-color: var(--accent); }
+  #tap-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: clamp(56px, 14vw, 100px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  #tap-target-hint {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  #tap-undo-wrap { margin-top: 14px; }
+  #tap-undo-btn {
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    padding: 8px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  #tap-undo-btn:hover { border-color: var(--warn); color: var(--warn); }
+
   /* Footer controls */
   .timer-footer {
     display: grid;
@@ -1151,7 +1194,7 @@
   </div>
 
   <div class="timer-main">
-    <div class="progress-circle-wrap">
+    <div class="progress-circle-wrap" id="progress-circle-wrap">
       <svg class="progress-circle" viewBox="0 0 200 200">
         <circle class="track" cx="100" cy="100" r="92"></circle>
         <circle class="bar" id="circle-bar" cx="100" cy="100" r="92"
@@ -1170,6 +1213,17 @@
       </div>
       <div class="total-bar">
         <div class="total-bar-fill" id="total-bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Tap counter (visible uniquement en mode libre sans cap) -->
+    <div id="tap-zone" style="display:none; width:100%; max-width:360px; text-align:center;">
+      <button id="tap-btn" aria-label="Compter une rep">
+        <span id="tap-count">0</span>
+        <span id="tap-target-hint"></span>
+      </button>
+      <div id="tap-undo-wrap">
+        <button id="tap-undo-btn">−1</button>
       </div>
     </div>
 
@@ -1350,6 +1404,7 @@ const state = {
   rafId: null,
   wakeLockObj: null,
   _pauseStart: 0,
+  tapCount: 0,
 };
 
 // ============================================================
@@ -1960,6 +2015,17 @@ function startWorkPhase() {
 
   state.phaseDuration = duration;
   state.phaseTarget = target;
+  state.tapCount = 0;
+
+  // Tap zone visibility
+  const isFree = duration === 0;
+  document.getElementById('tap-zone').style.display = isFree ? '' : 'none';
+  document.getElementById('progress-circle-wrap').style.display = isFree ? 'none' : '';
+  if (isFree) {
+    document.getElementById('tap-count').textContent = '0';
+    const hint = isSurprise ? '? REPS' : (target > 0 ? `/ ${target}` : '');
+    document.getElementById('tap-target-hint').textContent = hint;
+  }
 
   // Phase label
   const phaseEl = document.getElementById('timer-phase');
@@ -2123,7 +2189,12 @@ function showInputScreen() {
   }
 
   const inputEl = document.getElementById('input-count');
-  inputEl.value = isSurpriseInput ? 0 : (target > 0 ? target : 0);
+  const wasFree = state.phaseDuration === 0;
+  if (isSurpriseInput) {
+    inputEl.value = wasFree ? state.tapCount : 0;
+  } else {
+    inputEl.value = wasFree ? state.tapCount : (target > 0 ? target : 0);
+  }
   setTimeout(() => { inputEl.focus(); inputEl.select(); }, 100);
 
   const skipBtn = document.getElementById('input-skip-rest-btn');
@@ -2194,6 +2265,23 @@ document.getElementById('input-count').addEventListener('keydown', e => {
 // ============================================================
 //   PAUSE / NEXT
 // ============================================================
+document.getElementById('tap-btn').addEventListener('click', () => {
+  if (!state.running || state.paused || state.phase !== 'work') return;
+  state.tapCount++;
+  document.getElementById('tap-count').textContent = state.tapCount;
+  sounds.click();
+  // Auto-avance quand la cible est atteinte (sauf surprise)
+  const isSurp = state.mode === 'random' && state.options.randomSurprise;
+  if (!isSurp && state.phaseTarget > 0 && state.tapCount >= state.phaseTarget) {
+    onPhaseEnd();
+  }
+});
+document.getElementById('tap-undo-btn').addEventListener('click', () => {
+  if (state.tapCount <= 0) return;
+  state.tapCount--;
+  document.getElementById('tap-count').textContent = state.tapCount;
+});
+
 document.getElementById('pause-btn').addEventListener('click', () => {
   if (!state.running) return;
   state.paused = !state.paused;
