@@ -764,6 +764,31 @@
     animation: pulse 1s infinite alternate;
   }
 
+  /* ========== DONE BREAKDOWN ========== */
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+  }
+  .breakdown-table th {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .breakdown-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  .breakdown-table tr:last-child td { border-bottom: none; }
+  .breakdown-table .bd-hit { color: var(--ok); font-weight: 600; }
+  .breakdown-table .bd-over { color: var(--over); }
+  .breakdown-table .bd-under { color: var(--warn); }
+
   /* ========== HISTORY ========== */
   .history-stats {
     display: grid;
@@ -1291,6 +1316,8 @@
           <div class="stat-value" id="done-best">0</div>
         </div>
       </div>
+      <!-- Détail par série -->
+      <div id="done-breakdown" style="margin-top:16px;"></div>
     </div>
   </div>
   <div class="timer-footer">
@@ -2406,6 +2433,32 @@ function finishSession() {
   document.getElementById('done-rounds').textContent = rounds;
   document.getElementById('done-duration').textContent = formatTime(totalDur);
   document.getElementById('done-best').textContent = best;
+
+  // Breakdown par série
+  const bd = document.getElementById('done-breakdown');
+  if (state.roundCounts.length > 1) {
+    const rows = state.roundCounts.map((c, i) => {
+      const t = state.roundTargets[i] || 0;
+      let cls = '', hint = '';
+      if (t > 0) {
+        if (c === t) { cls = 'bd-hit'; hint = '✓'; }
+        else if (c > t) { cls = 'bd-over'; hint = `+${c - t}`; }
+        else { cls = 'bd-under'; hint = `−${t - c}`; }
+      }
+      return `<tr>
+        <td>#${i + 1}</td>
+        <td>${t > 0 ? t : '—'}</td>
+        <td class="${cls}">${c}</td>
+        <td class="${cls}" style="color:var(--muted);font-size:11px">${hint}</td>
+      </tr>`;
+    }).join('');
+    bd.innerHTML = `<table class="breakdown-table">
+      <thead><tr><th>Série</th><th>Cible</th><th>Réalisé</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  } else {
+    bd.innerHTML = '';
+  }
 
   const prBadges = document.getElementById('pr-badges');
   prBadges.innerHTML = '';
