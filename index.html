@@ -2339,11 +2339,14 @@ function buildSeriesTracker() {
 // ============================================================
 function updateTotalBar() {
   const goal = state.totalGoal;
+  const isTotalCap = state.mode === 'random' && state.config.random.totalCap > 0;
   document.getElementById('total-current').textContent = state.totalCount;
   if (goal > 0) {
     const pct = Math.min(100, (state.totalCount / goal) * 100);
     document.getElementById('total-bar-fill').style.width = pct + '%';
-    document.getElementById('total-pct').textContent = Math.round(pct) + '%';
+    const remaining = Math.max(0, goal - state.totalCount);
+    document.getElementById('total-pct').textContent =
+      isTotalCap ? `${remaining} rest.` : Math.round(pct) + '%';
   } else {
     document.getElementById('total-bar-fill').style.width = '0%';
     document.getElementById('total-pct').textContent = '—';
