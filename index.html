@@ -2175,9 +2175,9 @@ function buildSeriesTracker() {
     const target = state.roundTargets[i] || 0;
     const count = state.roundCounts[i];
 
-    const isSurpriseBubble = state.mode === 'random' && state.options.randomSurprise;
+    const isRandom = state.mode === 'random';
+    const isSurpriseCurrent = isRandom && state.options.randomSurprise;
     if (i + 1 < state.currentRound || (i + 1 === state.currentRound && state.phase === 'rest')) {
-      // Série terminée : on affiche le compte
       if (count !== undefined) {
         dot.textContent = count;
         if (target > 0 && count > target) dot.classList.add('over');
@@ -2189,10 +2189,10 @@ function buildSeriesTracker() {
       }
     } else if (i + 1 === state.currentRound && state.phase === 'work') {
       dot.classList.add('current');
-      dot.textContent = isSurpriseBubble ? '?' : (target > 0 ? target : '·');
+      dot.textContent = isSurpriseCurrent ? '?' : (target > 0 ? target : '·');
     } else {
-      // À venir : on montre la cible (cachée en surprise)
-      dot.textContent = isSurpriseBubble ? '?' : (target > 0 ? target : '·');
+      // Séries à venir : on cache toujours les cibles random (tirages non encore révélés)
+      dot.textContent = isRandom ? '·' : (target > 0 ? target : '·');
     }
     wrap.appendChild(dot);
   }
