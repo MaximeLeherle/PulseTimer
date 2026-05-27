@@ -141,6 +141,28 @@
   }
   .today-streak strong { color: var(--text); font-weight: 600; }
 
+  /* ========== EXERCISE FIELD ========== */
+  .exercise-wrap {
+    margin-bottom: 16px;
+  }
+  .exercise-wrap input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    transition: border-color 0.2s;
+  }
+  .exercise-wrap input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .exercise-wrap input::placeholder { color: var(--muted); }
+
   /* ========== MODE TABS ========== */
   .mode-tabs {
     display: grid;
@@ -400,6 +422,14 @@
   .timer-phase.rest { color: var(--rest); }
   .timer-phase.countdown { color: var(--warn); }
   .timer-phase.done { color: var(--ok); }
+
+  .timer-exercise {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
 
   .close-btn {
     background: var(--panel);
@@ -887,6 +917,11 @@
     </div>
   </div>
 
+  <!-- Exercise field -->
+  <div class="exercise-wrap">
+    <input type="text" id="exercise-input" placeholder="Exercice : pompes, squats, burpees…" maxlength="40" autocomplete="off" spellcheck="false">
+  </div>
+
   <!-- Mode tabs -->
   <div class="mode-tabs">
     <button class="mode-tab active" data-mode="sprint">SPRINT</button>
@@ -1108,7 +1143,10 @@
 <!-- ========== TIMER SCREEN ========== -->
 <div class="full-screen" id="timer-screen">
   <div class="timer-header">
-    <span class="timer-phase" id="timer-phase">PRÊT</span>
+    <div>
+      <span class="timer-phase" id="timer-phase">PRÊT</span>
+      <div class="timer-exercise" id="timer-exercise"></div>
+    </div>
     <button class="close-btn" id="close-btn">✕ FERMER</button>
   </div>
 
@@ -1290,6 +1328,7 @@ const DEFAULT_CONFIG = {
 
 const state = {
   mode: 'sprint',
+  exercise: '',
   options: {...DEFAULT_OPTIONS},
   config: JSON.parse(JSON.stringify(DEFAULT_CONFIG)),
 
@@ -1323,7 +1362,8 @@ const LS_PRESETS = 'pompes-presets-v2';
 function saveSettings() {
   try {
     localStorage.setItem(LS_CONFIG, JSON.stringify({
-      mode: state.mode, options: state.options, config: state.config
+      mode: state.mode, exercise: state.exercise,
+      options: state.options, config: state.config
     }));
   } catch(e) {}
 }
@@ -1333,6 +1373,7 @@ function loadSettings() {
     if (!raw) return;
     const data = JSON.parse(raw);
     if (data.mode) state.mode = data.mode;
+    if (data.exercise !== undefined) state.exercise = data.exercise;
     if (data.options) Object.assign(state.options, data.options);
     if (data.config) {
       for (const k in data.config) {
@@ -1537,7 +1578,13 @@ document.querySelectorAll('.toggle').forEach(t => {
   });
 });
 
+document.getElementById('exercise-input').addEventListener('input', e => {
+  state.exercise = e.target.value.trim();
+  saveSettings();
+});
+
 function applySettingsToUI() {
+  document.getElementById('exercise-input').value = state.exercise || '';
   document.querySelectorAll('.mode-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.mode === state.mode));
   document.querySelectorAll('.mode-config').forEach(c =>
@@ -1838,6 +1885,7 @@ function startSession() {
   document.getElementById('total-goal').textContent = state.totalGoal;
   updateTotalBar();
 
+  document.getElementById('timer-exercise').textContent = state.exercise || '';
   showScreen('timer');
   requestWakeLock();
   buildSeriesTracker();
