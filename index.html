@@ -8,37 +8,36 @@
 <meta name="theme-color" content="#0a0a0a">
 <title>Défi Pompes — Timer</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Bebas+Neue&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0a0a0a;
-    --panel: #141414;
-    --panel-2: #1c1c1c;
+    --bg: #0c0c0c;
+    --panel: #161616;
+    --panel-2: #1f1f1f;
     --line: #2a2a2a;
-    --text: #f5f5f5;
-    --muted: #888;
-    --accent: #d4ff3a;
-    --accent-soft: rgba(212, 255, 58, 0.15);
-    --accent-2: #3ad4ff;
-    --warn: #ff5e3a;
-    --rest: #3ad4ff;
-    --ok: #3aff8a;
+    --text: #f0f0f0;
+    --muted: #6b6b6b;
+    --accent: #e8ff4a;
+    --accent-soft: rgba(232, 255, 74, 0.12);
+    --accent-2: #4ae8ff;
+    --warn: #ff5a3c;
+    --rest: #4ae8ff;
+    --ok: #4affa0;
     --over: #ffb13a;
   }
-  /* Thème clair (toggle) */
   body.light {
-    --bg: #f5f5f0;
+    --bg: #f7f7f5;
     --panel: #ffffff;
-    --panel-2: #efefe8;
-    --line: #d8d8d0;
-    --text: #1a1a1a;
-    --muted: #777;
-    --accent: #4d8c00;
-    --accent-soft: rgba(77, 140, 0, 0.12);
-    --accent-2: #0080a0;
-    --rest: #0080a0;
+    --panel-2: #efefec;
+    --line: #e0e0da;
+    --text: #111111;
+    --muted: #888880;
+    --accent: #3d7a00;
+    --accent-soft: rgba(61, 122, 0, 0.12);
+    --accent-2: #0070a0;
+    --rest: #0070a0;
     --over: #b86600;
   }
 
@@ -46,7 +45,7 @@
     height: 100%;
     background: var(--bg);
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', system-ui, sans-serif;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
   }
@@ -473,11 +472,12 @@
     z-index: 1;
   }
   .big-time {
-    font-family: 'Bebas Neue', sans-serif;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
     font-size: clamp(72px, 18vw, 130px);
     line-height: 0.9;
     color: var(--text);
-    letter-spacing: -1px;
+    letter-spacing: -2px;
     font-variant-numeric: tabular-nums;
   }
   .big-time.warn { color: var(--warn); animation: pulse 0.5s infinite alternate; }
@@ -997,7 +997,15 @@
       <input type="number" id="random-cap" min="0" value="0">
     </div>
     <div class="field">
-      <label>Mode SURPRISE — objectif caché 🎲 (tu ne vois pas le nombre, tu dois compter dans ta tête)</label>
+      <label>Total cible (0 = séries fixes) — ex : 253 pompes ce soir</label>
+      <input type="number" id="random-totalcap" min="0" value="0">
+    </div>
+    <div class="field">
+      <label>Cacher le total cible (tu ne sais pas combien il reste)</label>
+      <div class="toggle" data-opt="randomTotalHidden"></div>
+    </div>
+    <div class="field">
+      <label>Mode SURPRISE — objectif de série caché 🎲</label>
       <div class="toggle" data-opt="randomSurprise"></div>
     </div>
     <p class="hint">À chaque série, un nombre aléatoire entre min et max est tiré. Surprise !</p>
@@ -1281,13 +1289,14 @@ const DEFAULT_OPTIONS = {
   repEstim: 2,
   pyramidUpDown: true,
   randomSurprise: false,
+  randomTotalHidden: false,
   theme: 'dark',
 };
 const DEFAULT_CONFIG = {
   sprint:  { target: 20, duration: 60 },
   tabata:  { work: 20, rest: 10, rounds: 8, target: 0 },
   series:  { rounds: 5, reps: 10, rest: 60, cap: 0 },
-  random:  { min: 5, max: 10, rounds: 10, rest: 30, cap: 0 },
+  random:  { min: 5, max: 10, rounds: 10, rest: 30, cap: 0, totalCap: 0 },
   emom:    { reps: 10, period: 60, rounds: 10 },
   pyramid: { start: 1, peak: 10, step: 1, rest: 30 },
 };
@@ -1495,6 +1504,7 @@ const configBindings = [
   ['random-rounds', 'random', 'rounds'],
   ['random-rest', 'random', 'rest'],
   ['random-cap', 'random', 'cap'],
+  ['random-totalcap', 'random', 'totalCap'],
   ['emom-reps', 'emom', 'reps'],
   ['emom-period', 'emom', 'period'],
   ['emom-rounds', 'emom', 'rounds'],
@@ -1640,14 +1650,24 @@ function updateSummaries() {
   const rdMin = Math.min(rd.min, rd.max);
   const rdMax = Math.max(rd.min, rd.max);
   const rdAvg = (rdMin + rdMax) / 2;
-  const rdTotalAvg = Math.round(rdAvg * rd.rounds);
   const rdEstim = rd.cap > 0 ? rd.cap : rdAvg * state.options.repEstim;
-  const rdTotalSec = rdEstim * rd.rounds + rd.rest * Math.max(0, rd.rounds - 1);
-  document.getElementById('summary-random').innerHTML = summaryHTML([
-    { label: 'TOTAL ≈', value: rdTotalAvg, unit: ' p.' },
-    { label: 'FOURCHETTE', value: `${rdMin * rd.rounds}-${rdMax * rd.rounds}`, unit: '' },
-    { label: 'DURÉE ≈', value: fmtDuration(rdTotalSec) },
-  ]);
+  if (rd.totalCap > 0) {
+    const estRounds = Math.round(rd.totalCap / Math.max(1, rdAvg));
+    const rdTotalSec2 = rdEstim * estRounds + rd.rest * Math.max(0, estRounds - 1);
+    document.getElementById('summary-random').innerHTML = summaryHTML([
+      { label: 'TOTAL CIBLE', value: rd.totalCap, unit: ' p.' },
+      { label: 'SÉRIES ≈', value: estRounds, unit: '' },
+      { label: 'DURÉE ≈', value: fmtDuration(rdTotalSec2) },
+    ]);
+  } else {
+    const rdTotalAvg = Math.round(rdAvg * rd.rounds);
+    const rdTotalSec = rdEstim * rd.rounds + rd.rest * Math.max(0, rd.rounds - 1);
+    document.getElementById('summary-random').innerHTML = summaryHTML([
+      { label: 'TOTAL ≈', value: rdTotalAvg, unit: ' p.' },
+      { label: 'FOURCHETTE', value: `${rdMin * rd.rounds}-${rdMax * rd.rounds}`, unit: '' },
+      { label: 'DURÉE ≈', value: fmtDuration(rdTotalSec) },
+    ]);
+  }
 
   // EMOM
   const em = state.config.emom;
@@ -1790,6 +1810,19 @@ function buildRoundTargets() {
   if (m === 'random') {
     const lo = Math.min(c.min, c.max);
     const hi = Math.max(c.min, c.max);
+    if (c.totalCap > 0) {
+      const targets = [];
+      let remaining = c.totalCap;
+      let safety = 0;
+      while (remaining > 0 && safety < 500) {
+        safety++;
+        const drawn = Math.floor(Math.random() * (hi - lo + 1)) + lo;
+        const capped = Math.min(drawn, remaining);
+        targets.push(capped);
+        remaining -= capped;
+      }
+      return targets;
+    }
     return Array.from({length: c.rounds}, () =>
       Math.floor(Math.random() * (hi - lo + 1)) + lo);
   }
@@ -1810,10 +1843,11 @@ function startSession() {
   state.sessionStart = performance.now();
   state.pausedElapsed = 0;
 
-  // Toggle l'affichage de la barre totale (cachée en mode surprise)
+  // Toggle l'affichage de la barre totale
   const surpriseActive = state.mode === 'random' && state.options.randomSurprise;
+  const totalHidden = state.mode === 'random' && state.options.randomTotalHidden;
   document.getElementById('total-wrap').style.display =
-    state.totalRounds > 1 && state.totalGoal > 0 && !surpriseActive ? '' : 'none';
+    state.totalRounds > 1 && state.totalGoal > 0 && !surpriseActive && !totalHidden ? '' : 'none';
   document.getElementById('total-goal').textContent = state.totalGoal;
   updateTotalBar();
 
