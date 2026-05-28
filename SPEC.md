@@ -378,11 +378,13 @@ Tracked here for the next dev iteration. Items marked **[bug]** affect current b
 
 ### Bugs
 
-**[bug] #1 — Sprint: no rep entry after timer ends**  
-`finishSession()` is called directly after the sprint timer. A rep entry screen should appear first (consistent with other timed modes). Fix: call `showInputScreen()` instead of `finishSession()` at the end of the sprint work phase.
+~~**[bug] #1 — Sprint: no rep entry after timer ends**~~  
+~~`finishSession()` is called directly after the sprint timer.~~  
+✅ Fixed — `onPhaseEnd()` calls `showInputScreen()` for all work phases including Sprint.
 
-**[bug] #2 — EMOM: no passive rest display**  
-Currently, `startRestPhase()` skips directly to the next work phase when `duration = 0` (which EMOM sets). The intended behavior is: the timer counts down the full period; the user's remaining time after finishing their reps is their visual rest. Fix: EMOM should not use `startRestPhase()` — the tick loop should continue within the same work phase until the period ends, then show the rep entry screen.
+~~**[bug] #2 — EMOM: no passive rest display**~~  
+~~`startRestPhase()` skips directly to the next work phase when `duration = 0`.~~  
+✅ Fixed — EMOM work phase duration = `emom.period`; tick loop counts down the full period, then shows the rep entry screen. No explicit rest phase.
 
 ### UX Improvements
 
@@ -425,8 +427,8 @@ The logic supports `duration = 0` for Sprint (tap counter, no timer) but the UI 
 - [x] Generic exercise field (free text, persisted)
 - [x] Mode cards (2-col grid, name + description)
 - [x] Session summary with per-set breakdown table
-- [ ] **Step 1:** Refactor monolith → ES6 modules (`scripts/` + `styles/`)
-- [ ] **Step 2:** Fix known bugs (#1 Sprint rep entry, #2 EMOM logic)
+- [x] **Step 1:** Refactor monolith → ES6 modules (`scripts/` + `styles/`)
+- [x] **Step 2:** Fix known bugs (#1 Sprint rep entry, #2 EMOM logic)
 - [ ] **Step 3:** UX improvements (#3 Done button, #4 Skip rest in timer, #5 tracker overflow)
 - [ ] **Step 4:** PWA — `manifest.json` + icons + self-hosted fonts (#9, #10)
 - [ ] **Step 5:** Accessibility audit + keyboard shortcuts
