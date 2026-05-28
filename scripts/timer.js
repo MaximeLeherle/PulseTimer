@@ -6,6 +6,7 @@ import { showScreen, screens } from './screens.js';
 import { setCircle, buildSeriesTracker, updateTotalBar } from './ui-timer.js';
 import { renderDoneScreen } from './ui-done.js';
 import { t } from './i18n.js';
+import { saveSession } from './history.js';
 
 // ---- Countdown ----
 function startCountdown() {
@@ -303,6 +304,20 @@ function finishSession() {
   sounds.done();
   speak(t('speech.done'));
   vibrate([100, 50, 100, 50, 200]);
+
+  saveSession({
+    id: Date.now().toString(36),
+    date: new Date().toISOString(),
+    exercise: state.exercise,
+    mode: state.mode,
+    roundTargets: [...state.roundTargets],
+    roundCounts:  [...state.roundCounts],
+    totalReps: state.totalCount,
+    durationSec: Math.round((performance.now() - state.sessionStart) / 1000),
+    workoutId:    state.activeWorkout?.id    ?? null,
+    workoutBlock: state.activeWorkout != null ? state.activeWorkoutBlock : null,
+  });
+
   renderDoneScreen();
   showScreen('done');
 }

@@ -5,12 +5,35 @@ import { applyTheme, applySettingsToUI, updateSummaries, updatePyramidPreview, i
 import { startSession, initTimer } from './timer.js';
 import { showScreen } from './screens.js';
 import { getLang, setLang, applyTranslations } from './i18n.js';
+import { renderWorkouts, initWorkoutBuilder, loadNextBlock, stopWorkout } from './ui-workouts.js';
 
-document.getElementById('done-close-btn').addEventListener('click', () => showScreen('main'));
-document.getElementById('done-finish-btn').addEventListener('click', () => showScreen('main'));
-document.getElementById('done-restart-btn').addEventListener('click', () => {
+// Done screen buttons — behaviour depends on active workout
+document.getElementById('done-close-btn').addEventListener('click', () => {
+  stopWorkout();
   showScreen('main');
-  setTimeout(() => { ensureAudio(); startSession(); }, 100);
+});
+document.getElementById('done-finish-btn').addEventListener('click', () => {
+  const w = state.activeWorkout;
+  if (w && state.activeWorkoutBlock < w.blocks.length - 1) {
+    // Advance to next block
+    loadNextBlock();
+    showScreen('main');
+  } else {
+    stopWorkout();
+    showScreen('main');
+  }
+});
+document.getElementById('done-restart-btn').addEventListener('click', () => {
+  const w = state.activeWorkout;
+  if (w && state.activeWorkoutBlock < w.blocks.length - 1) {
+    // Skip this block, advance
+    loadNextBlock();
+    showScreen('main');
+  } else {
+    stopWorkout();
+    showScreen('main');
+    setTimeout(() => { ensureAudio(); startSession(); }, 100);
+  }
 });
 
 document.getElementById('lang-btn').addEventListener('click', () => {
@@ -29,5 +52,12 @@ applySettingsToUI();
 applyTranslations();
 updateSummaries();
 updatePyramidPreview();
+document.getElementById('stop-workout-btn').addEventListener('click', () => {
+  stopWorkout();
+  renderWorkouts();
+});
+
+renderWorkouts();
+initWorkoutBuilder();
 initHome(() => { ensureAudio(); startSession(); });
 initTimer();

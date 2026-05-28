@@ -181,6 +181,16 @@ const translations = {
     'toast.over':    '✓ Objectif atteint ! +{n} de plus',
     'toast.under':   'Objectif : {target} — il manquait {n}',
 
+    // Workouts
+    'workout.title':    'Entraînements',
+    'workout.new':      '+ Nouveau',
+    'workout.next':     'Exercice suivant',
+    'workout.complete': 'Programme terminé !',
+    'workout.name_placeholder': 'Nom du programme…',
+    'workout.add_block': '+ Ajouter la config actuelle',
+    'workout.save':     'Sauvegarder',
+    'workout.cancel':   'Annuler',
+
     // Speech
     'speech.three': 'Trois',
     'speech.two':   'Deux',
@@ -341,6 +351,16 @@ const translations = {
     'unit.reps':    ' r.',
     'unit.times':   ' x',
     'unit.per_sec': '/s',
+
+    // Workouts
+    'workout.title':    'Workouts',
+    'workout.new':      '+ New',
+    'workout.next':     'Next exercise',
+    'workout.complete': 'Workout complete!',
+    'workout.name_placeholder': 'Workout name…',
+    'workout.add_block': '+ Add current config',
+    'workout.save':     'Save',
+    'workout.cancel':   'Cancel',
 
     // Toast
     'toast.perfect': '🎯 PERFECT! Exactly {n}!',

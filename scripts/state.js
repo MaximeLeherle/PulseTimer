@@ -46,4 +46,9 @@ export const state = {
   wakeLockObj: null,
   _pauseStart: 0,
   tapCount: 0,
+
+  // Workout runtime
+  activeWorkout: null,       // { id, name, blocks } or null
+  activeWorkoutBlock: -1,    // current block index (0-based), -1 = no workout
+  draftWorkout: null,        // { name, blocks } during builder
 };

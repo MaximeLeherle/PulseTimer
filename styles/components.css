@@ -397,6 +397,213 @@ header h1 {
 }
 .toast.show { bottom: 30px; }
 
+/* ========== WORKOUTS SECTION ========== */
+#workouts-section {
+  margin-bottom: 16px;
+}
+.workouts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.workouts-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Workout chips (horizontal scroll row) */
+.workout-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.workout-chips::-webkit-scrollbar { display: none; }
+.workout-chip {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 100px;
+}
+.workout-chip:hover  { border-color: var(--accent-2); }
+.workout-chip.active { border-color: var(--accent); background: var(--accent-soft); }
+.wc-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.workout-chip.active .wc-name { color: var(--accent); }
+.wc-count {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+/* Active workout banner */
+.active-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.banner-name {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.banner-exercise {
+  font-size: 12px;
+  color: var(--muted);
+}
+.banner-stop-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+.banner-stop-btn:hover { color: var(--warn); }
+
+/* Workout builder */
+.workout-builder {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 10px;
+}
+.workout-name-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.workout-name-input:focus { outline: none; border-color: var(--accent); }
+.workout-name-input::placeholder { color: var(--muted); }
+.builder-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.builder-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.bb-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  width: 16px;
+  flex-shrink: 0;
+}
+.bb-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.bb-info strong { font-size: 13px; color: var(--text); }
+.bb-info span   { font-size: 11px; color: var(--muted); }
+.bb-del {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.bb-del:hover { color: var(--warn); }
+.add-block-btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--panel-2);
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  margin-bottom: 12px;
+}
+.add-block-btn:hover { border-color: var(--accent); color: var(--text); }
+.builder-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.builder-save-btn {
+  flex: 1;
+  padding: 14px;
+  font-size: 14px;
+}
+
+/* Done screen — next block */
+.done-next-card {
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: left;
+}
+.done-next-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.done-next-exercise {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.done-next-mode {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
 /* ========== HINT ========== */
 .hint {
   font-size: 11px;

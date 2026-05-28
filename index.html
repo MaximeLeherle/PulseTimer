@@ -23,6 +23,39 @@
     </div>
   </header>
 
+  <!-- ========== WORKOUTS ========== -->
+  <div id="workouts-section">
+    <div class="workouts-header">
+      <span class="workouts-title" data-i18n="workout.title">Entraînements</span>
+      <button class="icon-btn" id="new-workout-btn" data-i18n="workout.new">+ Nouveau</button>
+    </div>
+
+    <!-- Active workout banner -->
+    <div id="active-workout-banner" style="display:none;" class="active-banner">
+      <div>
+        <div id="banner-name" class="banner-name"></div>
+        <div id="banner-exercise" class="banner-exercise"></div>
+      </div>
+      <button class="banner-stop-btn" id="stop-workout-btn">✕</button>
+    </div>
+
+    <!-- Workout chips -->
+    <div id="workout-chips" class="workout-chips"></div>
+
+    <!-- Builder (hidden by default) -->
+    <div id="workout-builder" class="workout-builder" style="display:none;">
+      <input id="workout-name-input" class="workout-name-input"
+        data-i18n-placeholder="workout.name_placeholder"
+        placeholder="Nom du programme…">
+      <div id="builder-blocks" class="builder-blocks"></div>
+      <button class="add-block-btn" id="add-block-btn" data-i18n="workout.add_block">+ Ajouter la config actuelle</button>
+      <div class="builder-footer">
+        <button class="icon-btn" id="cancel-builder-btn" data-i18n="workout.cancel">Annuler</button>
+        <button class="start-btn builder-save-btn" id="save-workout-btn" data-i18n="workout.save">Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Exercise field -->
   <div class="exercise-wrap">
     <input type="text" id="exercise-input"
@@ -355,6 +388,15 @@
         </div>
       </div>
       <div id="done-breakdown" style="margin-top:16px;"></div>
+
+      <!-- Next workout block -->
+      <div id="done-next-wrap" style="display:none; margin-top:20px;">
+        <div class="done-next-card">
+          <div id="done-next-label" class="done-next-label"></div>
+          <div id="done-next-exercise" class="done-next-exercise"></div>
+          <div id="done-next-mode" class="done-next-mode"></div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="timer-footer">
