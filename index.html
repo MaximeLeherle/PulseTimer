@@ -18,6 +18,7 @@
   <header>
     <h1>PULSETIMER</h1>
     <div class="header-actions">
+      <button class="icon-btn" id="stats-btn">Stats</button>
       <button class="icon-btn" id="lang-btn" data-i18n="btn.lang">EN</button>
       <button class="icon-btn" id="theme-btn" data-i18n="btn.theme">Thème</button>
     </div>
@@ -402,6 +403,75 @@
   <div class="timer-footer">
     <button id="done-restart-btn" data-i18n="btn.restart">🔄 REFAIRE</button>
     <button id="done-finish-btn" class="primary" data-i18n="btn.finish">✓ TERMINER</button>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD SCREEN ========== -->
+<div class="full-screen" id="dashboard-screen">
+  <div class="timer-header">
+    <span class="timer-phase" style="font-size:16px; letter-spacing:2px;">STATS</span>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="icon-btn" id="dash-clear-btn" style="font-size:11px; color:var(--warn); border-color:var(--warn);">Vider</button>
+      <button class="close-btn" id="dash-close-btn">✕ FERMER</button>
+    </div>
+  </div>
+
+  <div style="flex:1; overflow-y:auto; padding: 16px 0;">
+
+    <!-- Empty state -->
+    <div id="dash-empty" style="display:none; text-align:center; padding:60px 20px; color:var(--muted);">
+      <div style="font-size:40px; margin-bottom:16px;">📊</div>
+      <div style="font-size:15px; font-weight:600; margin-bottom:8px;">Aucune séance enregistrée</div>
+      <div style="font-size:13px;">Lance ton premier entraînement !</div>
+    </div>
+
+    <!-- Content -->
+    <div id="dash-content" style="display:none;">
+
+      <!-- Global stats -->
+      <div class="dash-stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">SÉANCES</div>
+          <div class="stat-value" id="dash-stat-sessions">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">REPS TOTALES</div>
+          <div class="stat-value" id="dash-stat-reps">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">DURÉE TOTALE</div>
+          <div class="stat-value" id="dash-stat-time">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">SÉRIE EN COURS</div>
+          <div class="stat-value" id="dash-stat-streak">—</div>
+        </div>
+      </div>
+
+      <!-- Activity grid -->
+      <div class="dash-section">
+        <div class="dash-section-title">ACTIVITÉ — 35 DERNIERS JOURS</div>
+        <div id="dash-grid" class="activity-grid"></div>
+        <div class="activity-legend">
+          <div class="activity-cell"></div><span>0</span>
+          <div class="activity-cell low"></div><span>1</span>
+          <div class="activity-cell high"></div><span>2+</span>
+        </div>
+      </div>
+
+      <!-- Per exercise -->
+      <div class="dash-section">
+        <div class="dash-section-title">PAR EXERCICE</div>
+        <div id="dash-exercises"></div>
+      </div>
+
+      <!-- History -->
+      <div class="dash-section">
+        <div class="dash-section-title">HISTORIQUE RÉCENT</div>
+        <div id="dash-history"></div>
+      </div>
+
+    </div>
   </div>
 </div>
 

@@ -6,6 +6,7 @@ import { startSession, initTimer } from './timer.js';
 import { showScreen } from './screens.js';
 import { getLang, setLang, applyTranslations } from './i18n.js';
 import { renderWorkouts, initWorkoutBuilder, loadNextBlock, stopWorkout } from './ui-workouts.js';
+import { renderDashboard, initDashboard } from './ui-dashboard.js';
 
 // Done screen buttons — behaviour depends on active workout
 document.getElementById('done-close-btn').addEventListener('click', () => {
@@ -36,6 +37,11 @@ document.getElementById('done-restart-btn').addEventListener('click', () => {
   }
 });
 
+document.getElementById('stats-btn').addEventListener('click', () => {
+  renderDashboard();
+  showScreen('dashboard');
+});
+
 document.getElementById('lang-btn').addEventListener('click', () => {
   setLang(getLang() === 'fr' ? 'en' : 'fr');
   applyTranslations();
@@ -57,6 +63,7 @@ document.getElementById('stop-workout-btn').addEventListener('click', () => {
   renderWorkouts();
 });
 
+initDashboard(() => showScreen('main'));
 renderWorkouts();
 initWorkoutBuilder();
 initHome(() => { ensureAudio(); startSession(); });
