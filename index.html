@@ -18,109 +18,113 @@
   <header>
     <h1>PULSETIMER</h1>
     <div class="header-actions">
-      <button class="icon-btn" id="theme-btn" title="Thème clair/sombre">Thème</button>
+      <button class="icon-btn" id="lang-btn" data-i18n="btn.lang">EN</button>
+      <button class="icon-btn" id="theme-btn" data-i18n="btn.theme">Thème</button>
     </div>
   </header>
 
   <!-- Exercise field -->
   <div class="exercise-wrap">
-    <input type="text" id="exercise-input" placeholder="Exercice : pompes, squats, burpees…" maxlength="40" autocomplete="off" spellcheck="false">
+    <input type="text" id="exercise-input"
+      data-i18n-placeholder="exercise.placeholder"
+      placeholder="Exercice : pompes, squats, burpees…"
+      maxlength="40" autocomplete="off" spellcheck="false">
   </div>
 
   <!-- Mode cards -->
   <div class="mode-grid">
     <button class="mode-card active" data-mode="sprint">
-      <div class="mode-card-name">Sprint</div>
-      <div class="mode-card-desc">Un effort continu, un objectif de reps ou un temps fixe.</div>
+      <div class="mode-card-name" data-i18n="mode.sprint.name">Sprint</div>
+      <div class="mode-card-desc" data-i18n="mode.sprint.desc">Un effort continu, un objectif de reps ou un temps fixe.</div>
     </button>
     <button class="mode-card" data-mode="tabata">
-      <div class="mode-card-name">Tabata</div>
-      <div class="mode-card-desc">Effort / repos en alternance. Format classique 20s / 10s.</div>
+      <div class="mode-card-name" data-i18n="mode.tabata.name">Tabata</div>
+      <div class="mode-card-desc" data-i18n="mode.tabata.desc">Effort / repos en alternance. Format classique 20s / 10s.</div>
     </button>
     <button class="mode-card" data-mode="series">
-      <div class="mode-card-name">Séries</div>
-      <div class="mode-card-desc">N séries avec repos entre chaque. Objectif libre ou fixe.</div>
+      <div class="mode-card-name" data-i18n="mode.series.name">Séries</div>
+      <div class="mode-card-desc" data-i18n="mode.series.desc">N séries avec repos entre chaque. Objectif libre ou fixe.</div>
     </button>
     <button class="mode-card" data-mode="random">
-      <div class="mode-card-name">Aléatoire</div>
-      <div class="mode-card-desc">Tirage au sort entre min et max à chaque série. Surprise !</div>
+      <div class="mode-card-name" data-i18n="mode.random.name">Aléatoire</div>
+      <div class="mode-card-desc" data-i18n="mode.random.desc">Tirage au sort entre min et max à chaque série. Surprise !</div>
     </button>
     <button class="mode-card" data-mode="emom">
-      <div class="mode-card-name">EMOM</div>
-      <div class="mode-card-desc">Quota à tenir chaque minute. Le reste du temps = repos.</div>
+      <div class="mode-card-name" data-i18n="mode.emom.name">EMOM</div>
+      <div class="mode-card-desc" data-i18n="mode.emom.desc">Quota à tenir chaque minute. Le reste du temps = repos.</div>
     </button>
     <button class="mode-card" data-mode="pyramid">
-      <div class="mode-card-name">Pyramide</div>
-      <div class="mode-card-desc">Reps croissants jusqu'au sommet, puis redescente.</div>
+      <div class="mode-card-name" data-i18n="mode.pyramid.name">Pyramide</div>
+      <div class="mode-card-desc" data-i18n="mode.pyramid.desc">Reps croissants jusqu'au sommet, puis redescente.</div>
     </button>
   </div>
 
   <!-- ========== SPRINT ========== -->
   <div class="panel mode-config active" id="config-sprint">
-    <h2>Sprint — X reps en Y secondes</h2>
+    <h2 data-i18n="config.sprint.title">Sprint — X reps en Y secondes</h2>
     <div class="field">
-      <label>Objectif (nombre de reps)</label>
+      <label data-i18n="config.sprint.target">Objectif (nombre de reps)</label>
       <input type="number" id="sprint-target" min="1" value="20">
     </div>
     <div class="field">
-      <label>Durée (secondes)</label>
+      <label data-i18n="config.sprint.duration">Durée (secondes)</label>
       <input type="number" id="sprint-duration" min="5" value="60">
     </div>
-    <p class="hint">Tu fais le maximum de reps dans le temps imparti.</p>
+    <p class="hint" data-i18n="config.sprint.hint">Tu fais le maximum de reps dans le temps imparti.</p>
     <div class="summary-box" id="summary-sprint"></div>
   </div>
 
   <!-- ========== TABATA ========== -->
   <div class="panel mode-config" id="config-tabata">
-    <h2>Tabata — Effort / Repos</h2>
+    <h2 data-i18n="config.tabata.title">Tabata — Effort / Repos</h2>
     <div class="field">
-      <label>Durée effort (secondes)</label>
+      <label data-i18n="config.tabata.work">Durée effort (secondes)</label>
       <input type="number" id="tabata-work" min="5" value="20">
     </div>
     <div class="field">
-      <label>Durée repos (secondes)</label>
+      <label data-i18n="config.tabata.rest">Durée repos (secondes)</label>
       <input type="number" id="tabata-rest" min="0" value="10">
     </div>
     <div class="field">
-      <label>Nombre de séries</label>
+      <label data-i18n="config.tabata.rounds">Nombre de séries</label>
       <input type="number" id="tabata-rounds" min="1" value="8">
     </div>
     <div class="field">
-      <label>Objectif reps / série (0 = libre)</label>
+      <label data-i18n="config.tabata.target">Objectif reps / série (0 = libre)</label>
       <input type="number" id="tabata-target" min="0" value="0">
     </div>
-    <p class="hint">Format classique : 20s effort / 10s repos × 8 = 4 minutes.</p>
+    <p class="hint" data-i18n="config.tabata.hint">Format classique : 20s effort / 10s repos × 8 = 4 minutes.</p>
     <div class="summary-box" id="summary-tabata"></div>
   </div>
 
   <!-- ========== SÉRIES ========== -->
   <div class="panel mode-config" id="config-series">
-    <h2>Séries libres</h2>
+    <h2 data-i18n="config.series.title">Séries libres</h2>
     <div class="field">
-      <label>Nombre de séries</label>
+      <label data-i18n="config.series.rounds">Nombre de séries</label>
       <input type="number" id="series-rounds" min="1" value="5">
     </div>
     <div class="field">
-      <label>Reps par série (objectif)</label>
+      <label data-i18n="config.series.reps">Reps par série (objectif)</label>
       <input type="number" id="series-reps" min="1" value="10">
     </div>
     <div class="field">
-      <label>Repos entre séries (secondes)</label>
+      <label data-i18n="config.series.rest">Repos entre séries (secondes)</label>
       <input type="number" id="series-rest" min="0" value="60">
     </div>
     <div class="field">
-      <label>Limite de temps par série (sec, 0 = illimité)</label>
+      <label data-i18n="config.series.cap">Limite de temps par série (sec, 0 = illimité)</label>
       <input type="number" id="series-cap" min="0" value="0">
     </div>
-    <p class="hint">Tu valides ton compte à la fin de chaque série, le repos démarre.</p>
+    <p class="hint" data-i18n="config.series.hint">Tu valides ton compte à la fin de chaque série, le repos démarre.</p>
     <div class="summary-box" id="summary-series"></div>
   </div>
 
   <!-- ========== RANDOM ========== -->
   <div class="panel mode-config" id="config-random">
-    <h2>Aléatoire — Tirage entre 2 nombres</h2>
+    <h2 data-i18n="config.random.title">Aléatoire — Tirage entre 2 nombres</h2>
     <div class="field">
-      <label>Reps par série (min — max)</label>
+      <label data-i18n="config.random.minmax">Reps par série (min — max)</label>
       <div class="field-row">
         <input type="number" id="random-min" min="1" value="5" style="width:70px">
         <span class="field-sep">–</span>
@@ -128,118 +132,118 @@
       </div>
     </div>
     <div class="field">
-      <label>Nombre de séries</label>
+      <label data-i18n="config.random.rounds">Nombre de séries</label>
       <input type="number" id="random-rounds" min="1" value="10">
     </div>
     <div class="field">
-      <label>Repos entre séries (secondes)</label>
+      <label data-i18n="config.random.rest">Repos entre séries (secondes)</label>
       <input type="number" id="random-rest" min="0" value="30">
     </div>
     <div class="field">
-      <label>Limite de temps par série (sec, 0 = illimité)</label>
+      <label data-i18n="config.random.cap">Limite de temps par série (sec, 0 = illimité)</label>
       <input type="number" id="random-cap" min="0" value="0">
     </div>
     <div class="field">
-      <label>Total cible (0 = séries fixes)</label>
+      <label data-i18n="config.random.totalcap">Total cible (0 = séries fixes)</label>
       <input type="number" id="random-totalcap" min="0" value="0">
     </div>
     <div class="field">
-      <label>Cacher le total cible (tu ne sais pas combien il reste)</label>
+      <label data-i18n="config.random.hide_total">Cacher le total cible (tu ne sais pas combien il reste)</label>
       <div class="toggle" data-opt="randomTotalHidden"></div>
     </div>
     <div class="field">
-      <label>Mode SURPRISE — objectif de série caché 🎲</label>
+      <label data-i18n="config.random.surprise">Mode SURPRISE — objectif de série caché 🎲</label>
       <div class="toggle" data-opt="randomSurprise"></div>
     </div>
-    <p class="hint">À chaque série, un nombre aléatoire entre min et max est tiré. Surprise !</p>
+    <p class="hint" data-i18n="config.random.hint">À chaque série, un nombre aléatoire entre min et max est tiré. Surprise !</p>
     <div class="summary-box" id="summary-random"></div>
   </div>
 
   <!-- ========== EMOM ========== -->
   <div class="panel mode-config" id="config-emom">
-    <h2>EMOM — Every Minute On the Minute</h2>
+    <h2 data-i18n="config.emom.title">EMOM — Every Minute On the Minute</h2>
     <div class="field">
-      <label>Reps par minute</label>
+      <label data-i18n="config.emom.reps">Reps par minute</label>
       <input type="number" id="emom-reps" min="1" value="10">
     </div>
     <div class="field">
-      <label>Durée d'une "minute" (secondes)</label>
+      <label data-i18n="config.emom.period">Durée d'une "minute" (secondes)</label>
       <input type="number" id="emom-period" min="15" value="60">
     </div>
     <div class="field">
-      <label>Nombre de minutes (rounds)</label>
+      <label data-i18n="config.emom.rounds">Nombre de minutes (rounds)</label>
       <input type="number" id="emom-rounds" min="1" value="10">
     </div>
-    <p class="hint">À chaque début de période, tu fais ton quota. Le repos = ce qui te reste sur la période.</p>
+    <p class="hint" data-i18n="config.emom.hint">À chaque début de période, tu fais ton quota. Le repos = ce qui te reste sur la période.</p>
     <div class="summary-box" id="summary-emom"></div>
   </div>
 
   <!-- ========== PYRAMIDE ========== -->
   <div class="panel mode-config" id="config-pyramid">
-    <h2>Pyramide</h2>
+    <h2 data-i18n="config.pyramid.title">Pyramide</h2>
     <div class="field">
-      <label>Départ</label>
+      <label data-i18n="config.pyramid.start">Départ</label>
       <input type="number" id="pyramid-start" min="1" value="1">
     </div>
     <div class="field">
-      <label>Sommet (max)</label>
+      <label data-i18n="config.pyramid.peak">Sommet (max)</label>
       <input type="number" id="pyramid-peak" min="2" value="10">
     </div>
     <div class="field">
-      <label>Pas (incrément)</label>
+      <label data-i18n="config.pyramid.step">Pas (incrément)</label>
       <input type="number" id="pyramid-step" min="1" value="1">
     </div>
     <div class="field">
-      <label>Aller-retour (montée + descente)</label>
+      <label data-i18n="config.pyramid.updown">Aller-retour (montée + descente)</label>
       <div class="toggle on" data-opt="pyramidUpDown"></div>
     </div>
     <div class="field">
-      <label>Repos entre paliers (secondes)</label>
+      <label data-i18n="config.pyramid.rest">Repos entre paliers (secondes)</label>
       <input type="number" id="pyramid-rest" min="0" value="30">
     </div>
     <div class="pyramid-preview" id="pyramid-preview"></div>
-    <p class="hint">Ex: 1, 2, 3, 4, 5, 4, 3, 2, 1 (aller-retour) ou 1, 2, 3, 4, 5 (montée seule).</p>
+    <p class="hint" data-i18n="config.pyramid.hint">Ex: 1, 2, 3, 4, 5, 4, 3, 2, 1 (aller-retour) ou 1, 2, 3, 4, 5 (montée seule).</p>
     <div class="summary-box" id="summary-pyramid"></div>
   </div>
 
   <!-- ========== OPTIONS ========== -->
   <div class="panel">
-    <h2>Options</h2>
+    <h2 data-i18n="options.title">Options</h2>
     <div class="field">
-      <label>Compte à rebours avant le départ (3-2-1)</label>
+      <label data-i18n="options.countdown">Compte à rebours avant le départ (3-2-1)</label>
       <div class="toggle on" data-opt="countdown"></div>
     </div>
     <div class="field">
-      <label>Sons</label>
+      <label data-i18n="options.sound">Sons</label>
       <div class="toggle on" data-opt="sound"></div>
     </div>
     <div class="field">
-      <label>Bip sur les 3 dernières secondes</label>
+      <label data-i18n="options.last_seconds">Bip sur les 3 dernières secondes</label>
       <div class="toggle on" data-opt="lastSeconds"></div>
     </div>
     <div class="field">
-      <label>Annonces vocales</label>
+      <label data-i18n="options.voice">Annonces vocales</label>
       <div class="toggle" data-opt="voice"></div>
     </div>
     <div class="field">
-      <label>Vibration</label>
+      <label data-i18n="options.vibrate">Vibration</label>
       <div class="toggle on" data-opt="vibrate"></div>
     </div>
     <div class="field">
-      <label>Garder l'écran allumé</label>
+      <label data-i18n="options.wake_lock">Garder l'écran allumé</label>
       <div class="toggle on" data-opt="wakeLock"></div>
     </div>
     <div class="field">
-      <label>Volume (%)</label>
+      <label data-i18n="options.volume">Volume (%)</label>
       <input type="number" id="opt-volume" min="0" max="100" value="60">
     </div>
     <div class="field">
-      <label>Estimation durée par rep (sec)</label>
+      <label data-i18n="options.rep_estim">Estimation durée par rep (sec)</label>
       <input type="number" id="opt-rep-estim" min="1" max="10" value="2">
     </div>
   </div>
 
-  <button class="start-btn" id="start-btn">Démarrer</button>
+  <button class="start-btn" id="start-btn" data-i18n="btn.start">Démarrer</button>
 
 </div>
 
@@ -250,7 +254,7 @@
       <span class="timer-phase" id="timer-phase">PRÊT</span>
       <div class="timer-exercise" id="timer-exercise"></div>
     </div>
-    <button class="close-btn" id="close-btn">✕ FERMER</button>
+    <button class="close-btn" id="close-btn" data-i18n="btn.close">✕ FERMER</button>
   </div>
 
   <div class="timer-main">
@@ -268,7 +272,7 @@
 
     <div class="total-bar-wrap" id="total-wrap" style="display:none;">
       <div class="total-bar-header">
-        <span>TOTAL : <strong id="total-current">0</strong> / <span id="total-goal">0</span></span>
+        <span><span data-i18n="timer.total">TOTAL</span> : <strong id="total-current">0</strong> / <span id="total-goal">0</span></span>
         <span id="total-pct">0%</span>
       </div>
       <div class="total-bar">
@@ -284,15 +288,15 @@
       <div id="tap-undo-wrap">
         <button id="tap-undo-btn">−1</button>
       </div>
-      <button id="done-phase-btn">✓ SÉRIE FAITE</button>
+      <button id="done-phase-btn" data-i18n="btn.done_phase">✓ SÉRIE FAITE</button>
     </div>
 
     <div class="series-tracker" id="series-tracker"></div>
   </div>
 
   <div class="timer-footer">
-    <button id="pause-btn">⏸ PAUSE</button>
-    <button id="next-btn">⏭ SUIVANT</button>
+    <button id="pause-btn" data-i18n="btn.pause">⏸ PAUSE</button>
+    <button id="next-btn" data-i18n="btn.next">⏭ SUIVANT</button>
   </div>
 </div>
 
@@ -300,11 +304,11 @@
 <div class="full-screen" id="input-screen">
   <div class="timer-header">
     <span class="timer-phase" id="input-phase">SÉRIE TERMINÉE</span>
-    <button class="close-btn" id="input-close-btn">✕ FERMER</button>
+    <button class="close-btn" id="input-close-btn" data-i18n="btn.close">✕ FERMER</button>
   </div>
   <div class="timer-main">
     <div class="input-card">
-      <div class="input-target-label">COMBIEN DE REPS ?</div>
+      <div class="input-target-label" data-i18n="input.question">COMBIEN DE REPS ?</div>
       <div class="input-target-value" id="input-target-value"></div>
       <input type="number" id="input-count" class="big-input" min="0" value="0">
       <div class="quick-buttons">
@@ -317,36 +321,36 @@
     </div>
   </div>
   <div class="timer-footer">
-    <button id="input-skip-rest-btn">⏭ PASSER LE REPOS</button>
-    <button id="input-validate-btn" class="primary">✓ VALIDER</button>
+    <button id="input-skip-rest-btn" data-i18n="btn.skip_rest">⏭ PASSER LE REPOS</button>
+    <button id="input-validate-btn" class="primary" data-i18n="btn.validate">✓ VALIDER</button>
   </div>
 </div>
 
 <!-- ========== DONE SCREEN ========== -->
 <div class="full-screen" id="done-screen">
   <div class="timer-header">
-    <span class="timer-phase done">TERMINÉ ✓</span>
-    <button class="close-btn" id="done-close-btn">✕ FERMER</button>
+    <span class="timer-phase done" data-i18n="done.phase">TERMINÉ ✓</span>
+    <button class="close-btn" id="done-close-btn" data-i18n="btn.close">✕ FERMER</button>
   </div>
   <div class="timer-main">
     <div class="done-card">
-      <h2>BRAVO</h2>
-      <p style="color:var(--muted); letter-spacing:1px;" id="done-subtitle">Séance terminée</p>
+      <h2 data-i18n="done.bravo">BRAVO</h2>
+      <p style="color:var(--muted); letter-spacing:1px;" id="done-subtitle" data-i18n="done.subtitle">Séance terminée</p>
       <div class="done-stats">
         <div class="stat-card">
-          <div class="stat-label">REPS TOTALES</div>
+          <div class="stat-label" data-i18n="done.total_reps">REPS TOTALES</div>
           <div class="stat-value" id="done-total">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">SÉRIES</div>
+          <div class="stat-label" data-i18n="done.sets">SÉRIES</div>
           <div class="stat-value" id="done-rounds">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">DURÉE</div>
+          <div class="stat-label" data-i18n="done.duration">DURÉE</div>
           <div class="stat-value" id="done-duration">0s</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">MEILLEURE SÉRIE</div>
+          <div class="stat-label" data-i18n="done.best">MEILLEURE SÉRIE</div>
           <div class="stat-value" id="done-best">0</div>
         </div>
       </div>
@@ -354,8 +358,8 @@
     </div>
   </div>
   <div class="timer-footer">
-    <button id="done-restart-btn">🔄 REFAIRE</button>
-    <button id="done-finish-btn" class="primary">✓ TERMINER</button>
+    <button id="done-restart-btn" data-i18n="btn.restart">🔄 REFAIRE</button>
+    <button id="done-finish-btn" class="primary" data-i18n="btn.finish">✓ TERMINER</button>
   </div>
 </div>
 

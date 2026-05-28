@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { t } from './i18n.js';
 
 let audioCtx = null;
 
@@ -43,7 +44,7 @@ export function speak(text) {
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'fr-FR';
+    u.lang = t('speech.lang');
     u.rate = 1.1;
     u.volume = state.options.volume / 100;
     speechSynthesis.speak(u);

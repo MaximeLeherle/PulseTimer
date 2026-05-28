@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { t } from './i18n.js';
 
 const CIRCLE_LEN = 2 * Math.PI * 92;
 
@@ -21,7 +22,7 @@ export function buildSeriesTracker() {
     wrap.innerHTML = `
       <div class="tracker-compact">
         <div class="tracker-compact-header">
-          <span class="tracker-compact-label">SÉRIE</span>
+          <span class="tracker-compact-label">${t('tracker.series')}</span>
           <span class="tracker-compact-num">${state.currentRound}<span class="tracker-compact-total"> / ${state.totalRounds}</span></span>
         </div>
         <div class="tracker-mini-bar">

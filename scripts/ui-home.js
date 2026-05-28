@@ -2,6 +2,7 @@ import { state } from './state.js';
 import { saveSettings } from './storage.js';
 import { fmtDuration } from './utils.js';
 import { buildPyramidSequence } from './modes.js';
+import { t } from './i18n.js';
 
 export function applyTheme() {
   document.body.classList.toggle('light', state.options.theme === 'light');
@@ -52,27 +53,27 @@ export function updatePyramidPreview() {
 export function updateSummaries() {
   const sp = state.config.sprint;
   document.getElementById('summary-sprint').innerHTML = summaryHTML([
-    { label: 'OBJECTIF', value: sp.target, unit: ' p.' },
-    { label: 'TEMPS', value: fmtDuration(sp.duration) },
-    { label: 'RYTHME', value: sp.duration > 0 ? (sp.target / sp.duration).toFixed(2) : '—', unit: '/s' },
+    { label: t('summary.target'), value: sp.target, unit: t('unit.reps') },
+    { label: t('summary.time'),   value: fmtDuration(sp.duration) },
+    { label: t('summary.pace'),   value: sp.duration > 0 ? (sp.target / sp.duration).toFixed(2) : '—', unit: t('unit.per_sec') },
   ]);
 
   const tb = state.config.tabata;
   const tbTotalSec    = (tb.work + tb.rest) * tb.rounds - tb.rest;
   const tbTotalPompes = (tb.target || 0) * tb.rounds;
   document.getElementById('summary-tabata').innerHTML = summaryHTML([
-    { label: tb.target > 0 ? 'TOTAL' : 'SÉRIES', value: tb.target > 0 ? tbTotalPompes : tb.rounds, unit: tb.target > 0 ? ' p.' : ' x' },
-    { label: 'DURÉE',  value: fmtDuration(tbTotalSec) },
-    { label: 'EFFORT', value: fmtDuration(tb.work * tb.rounds) },
+    { label: tb.target > 0 ? t('summary.total') : t('summary.sets'), value: tb.target > 0 ? tbTotalPompes : tb.rounds, unit: tb.target > 0 ? t('unit.reps') : t('unit.times') },
+    { label: t('summary.duration'),  value: fmtDuration(tbTotalSec) },
+    { label: t('summary.effort'),    value: fmtDuration(tb.work * tb.rounds) },
   ]);
 
   const sr = state.config.series;
   const estimEffort = sr.cap > 0 ? sr.cap : sr.reps * state.options.repEstim;
   const srTotalSec  = estimEffort * sr.rounds + sr.rest * Math.max(0, sr.rounds - 1);
   document.getElementById('summary-series').innerHTML = summaryHTML([
-    { label: 'TOTAL', value: sr.reps * sr.rounds, unit: ' p.' },
-    { label: sr.cap > 0 ? 'DURÉE' : 'DURÉE ≈', value: fmtDuration(srTotalSec) },
-    { label: 'REPOS', value: fmtDuration(sr.rest * Math.max(0, sr.rounds - 1)) },
+    { label: t('summary.total'),    value: sr.reps * sr.rounds, unit: t('unit.reps') },
+    { label: sr.cap > 0 ? t('summary.duration') : t('summary.duration_approx'), value: fmtDuration(srTotalSec) },
+    { label: t('summary.rest'),     value: fmtDuration(sr.rest * Math.max(0, sr.rounds - 1)) },
   ]);
 
   const rd     = state.config.random;
@@ -84,24 +85,24 @@ export function updateSummaries() {
     const estRounds  = Math.round(rd.totalCap / Math.max(1, rdAvg));
     const rdTotalSec = rdEstim * estRounds + rd.rest * Math.max(0, estRounds - 1);
     document.getElementById('summary-random').innerHTML = summaryHTML([
-      { label: 'TOTAL CIBLE', value: rd.totalCap, unit: ' p.' },
-      { label: 'SÉRIES ≈',   value: estRounds, unit: '' },
-      { label: 'DURÉE ≈',    value: fmtDuration(rdTotalSec) },
+      { label: t('summary.total_target'), value: rd.totalCap, unit: t('unit.reps') },
+      { label: t('summary.sets_approx'),  value: estRounds, unit: '' },
+      { label: t('summary.duration_approx'), value: fmtDuration(rdTotalSec) },
     ]);
   } else {
     const rdTotalSec = rdEstim * rd.rounds + rd.rest * Math.max(0, rd.rounds - 1);
     document.getElementById('summary-random').innerHTML = summaryHTML([
-      { label: 'TOTAL ≈',    value: Math.round(rdAvg * rd.rounds), unit: ' p.' },
-      { label: 'FOURCHETTE', value: `${rdMin * rd.rounds}-${rdMax * rd.rounds}`, unit: '' },
-      { label: 'DURÉE ≈',   value: fmtDuration(rdTotalSec) },
+      { label: t('summary.total_approx'), value: Math.round(rdAvg * rd.rounds), unit: t('unit.reps') },
+      { label: t('summary.range'),        value: `${rdMin * rd.rounds}-${rdMax * rd.rounds}`, unit: '' },
+      { label: t('summary.duration_approx'), value: fmtDuration(rdTotalSec) },
     ]);
   }
 
   const em = state.config.emom;
   document.getElementById('summary-emom').innerHTML = summaryHTML([
-    { label: 'TOTAL',  value: em.reps * em.rounds, unit: ' p.' },
-    { label: 'DURÉE',  value: fmtDuration(em.period * em.rounds) },
-    { label: 'PAR MIN', value: em.reps, unit: ' p.' },
+    { label: t('summary.total'),   value: em.reps * em.rounds, unit: t('unit.reps') },
+    { label: t('summary.duration'), value: fmtDuration(em.period * em.rounds) },
+    { label: t('summary.per_min'), value: em.reps, unit: t('unit.reps') },
   ]);
 
   const seq    = buildPyramidSequence();
@@ -110,9 +111,9 @@ export function updateSummaries() {
   const pyEstim = seq.reduce((a, b) => a + b * state.options.repEstim, 0)
     + py.rest * Math.max(0, seq.length - 1);
   document.getElementById('summary-pyramid').innerHTML = summaryHTML([
-    { label: 'TOTAL',   value: pyTotal, unit: ' p.' },
-    { label: 'PALIERS', value: seq.length, unit: '' },
-    { label: 'DURÉE ≈', value: fmtDuration(pyEstim) },
+    { label: t('summary.total'),   value: pyTotal, unit: t('unit.reps') },
+    { label: t('summary.levels'),  value: seq.length, unit: '' },
+    { label: t('summary.duration_approx'), value: fmtDuration(pyEstim) },
   ]);
 }
 

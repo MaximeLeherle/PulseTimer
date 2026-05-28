@@ -5,11 +5,12 @@ import { buildRoundTargets } from './modes.js';
 import { showScreen, screens } from './screens.js';
 import { setCircle, buildSeriesTracker, updateTotalBar } from './ui-timer.js';
 import { renderDoneScreen } from './ui-done.js';
+import { t } from './i18n.js';
 
 // ---- Countdown ----
 function startCountdown() {
   state.phase = 'countdown';
-  document.getElementById('timer-phase').textContent = 'PRÊT...';
+  document.getElementById('timer-phase').textContent = t('phase.ready');
   document.getElementById('timer-phase').className   = 'timer-phase countdown';
   document.getElementById('effort-target').innerHTML = '';
   setCircle(0, 'warn');
@@ -19,7 +20,7 @@ function startCountdown() {
   big.className   = 'big-time countdown';
   big.textContent = n;
   sounds.countdown();
-  speak('Trois');
+  speak(t('speech.three'));
 
   const iv = setInterval(() => {
     if (!state.running) { clearInterval(iv); return; }
@@ -28,11 +29,11 @@ function startCountdown() {
     if (n > 0) {
       big.textContent = n;
       sounds.countdown();
-      speak(n === 2 ? 'Deux' : 'Un');
+      speak(n === 2 ? t('speech.two') : t('speech.one'));
     } else if (n === 0) {
       big.textContent = 'GO';
       sounds.go();
-      speak('Partez');
+      speak(t('speech.go'));
     } else {
       clearInterval(iv);
       startWorkPhase();
@@ -73,10 +74,10 @@ function startWorkPhase() {
   }
 
   const phaseEl = document.getElementById('timer-phase');
-  if      (m === 'sprint')  phaseEl.textContent = 'SPRINT';
-  else if (m === 'tabata')  phaseEl.textContent = `EFFORT ${state.currentRound}/${state.totalRounds}`;
-  else if (m === 'emom')    phaseEl.textContent = `MIN ${state.currentRound}/${state.totalRounds}`;
-  else                      phaseEl.textContent = `SÉRIE ${state.currentRound}/${state.totalRounds}`;
+  if      (m === 'sprint')  phaseEl.textContent = t('phase.sprint');
+  else if (m === 'tabata')  phaseEl.textContent = `${t('phase.effort')} ${state.currentRound}/${state.totalRounds}`;
+  else if (m === 'emom')    phaseEl.textContent = `${t('phase.min')} ${state.currentRound}/${state.totalRounds}`;
+  else                      phaseEl.textContent = `${t('phase.series')} ${state.currentRound}/${state.totalRounds}`;
   phaseEl.className = 'timer-phase';
 
   document.getElementById('big-time').className = 'big-time';
@@ -88,15 +89,15 @@ function startWorkPhase() {
     tgEl.innerHTML = `<strong>${target}</strong> REPS`;
     if (m === 'random') tgEl.innerHTML += ' 🎲';
   } else {
-    tgEl.innerHTML = 'LIBRE';
+    tgEl.innerHTML = t('phase.free');
   }
 
-  document.getElementById('next-btn').textContent = '⏭ SUIVANT';
+  document.getElementById('next-btn').textContent = t('btn.next');
   setCircle(0, 'normal');
   buildSeriesTracker();
   sounds.go();
-  if (!isSurprise && m === 'random' && target > 0) speak(`${target} reps`);
-  else if (target > 0) speak('Go');
+  if (!isSurprise && m === 'random' && target > 0) speak(t('speech.n_reps', { n: target }));
+  else if (target > 0) speak(t('speech.go'));
   vibrate(50);
   tickLoop();
 }
@@ -119,14 +120,14 @@ function startRestPhase() {
 
   document.getElementById('tap-zone').style.display             = 'none';
   document.getElementById('progress-circle-wrap').style.display = '';
-  document.getElementById('next-btn').textContent    = '⏭ PASSER';
-  document.getElementById('timer-phase').textContent = 'REPOS';
+  document.getElementById('next-btn').textContent    = t('btn.skip');
+  document.getElementById('timer-phase').textContent = t('phase.rest');
   document.getElementById('timer-phase').className   = 'timer-phase rest';
   document.getElementById('big-time').className      = 'big-time rest';
   document.getElementById('effort-target').innerHTML = '';
   setCircle(0, 'rest');
   sounds.rest();
-  speak('Repos');
+  speak(t('speech.rest'));
   vibrate([30, 30, 30]);
   tickLoop();
 }
@@ -198,15 +199,15 @@ function showInputScreen() {
 
   document.getElementById('input-phase').textContent =
     state.mode === 'sprint'
-      ? 'SPRINT TERMINÉ'
-      : `SÉRIE ${state.currentRound}/${state.totalRounds} TERMINÉE`;
+      ? t('input.phase.sprint')
+      : t('input.phase.series', { round: state.currentRound, total: state.totalRounds });
 
   const isSurpriseInput = state.mode === 'random' && state.options.randomSurprise;
   const tgEl = document.getElementById('input-target-value');
   if (isSurpriseInput && target > 0) {
-    tgEl.innerHTML = `🎲 Objectif secret révélé : <strong style="color:var(--accent);font-size:28px">${target}</strong>`;
+    tgEl.innerHTML = `${t('input.surprise_reveal')} <strong style="color:var(--accent);font-size:28px">${target}</strong>`;
   } else {
-    tgEl.textContent = target > 0 ? `Objectif : ${target}` : 'Libre';
+    tgEl.textContent = target > 0 ? t('input.objective', { n: target }) : t('input.free');
   }
 
   const inputEl  = document.getElementById('input-count');
@@ -233,9 +234,9 @@ function validateInput(skipRest = false) {
     const target = state.phaseTarget;
     if (target > 0) {
       const diff = val - target;
-      if (diff === 0)  showToast(`🎯 PARFAIT ! Exactement ${target} !`);
-      else if (diff > 0) showToast(`✓ Objectif atteint ! +${diff} de plus`);
-      else               showToast(`Objectif : ${target} — il manquait ${Math.abs(diff)}`);
+      if (diff === 0)    showToast(t('toast.perfect', { n: target }));
+      else if (diff > 0) showToast(t('toast.over', { n: diff }));
+      else               showToast(t('toast.under', { target, n: Math.abs(diff) }));
     }
   }
 
@@ -300,7 +301,7 @@ function finishSession() {
   releaseWakeLock();
   state.phase = 'done';
   sounds.done();
-  speak('Bravo, séance terminée');
+  speak(t('speech.done'));
   vibrate([100, 50, 100, 50, 200]);
   renderDoneScreen();
   showScreen('done');
@@ -315,10 +316,10 @@ export function initTimer() {
     state.paused = !state.paused;
     if (state.paused) {
       state._pauseStart = performance.now();
-      document.getElementById('pause-btn').textContent = '▶ REPRENDRE';
+      document.getElementById('pause-btn').textContent = t('btn.resume');
     } else {
       state.pausedElapsed += performance.now() - state._pauseStart;
-      document.getElementById('pause-btn').textContent = '⏸ PAUSE';
+      document.getElementById('pause-btn').textContent = t('btn.pause');
     }
   });
 

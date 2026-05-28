@@ -1,5 +1,6 @@
 import { state } from './state.js';
 import { formatTime } from './utils.js';
+import { t } from './i18n.js';
 
 export function renderDoneScreen() {
   const totalDur = (performance.now() - state.sessionStart) / 1000;
@@ -29,7 +30,7 @@ export function renderDoneScreen() {
       </tr>`;
     }).join('');
     bd.innerHTML = `<table class="breakdown-table">
-      <thead><tr><th>Série</th><th>Cible</th><th>Réalisé</th><th></th></tr></thead>
+      <thead><tr><th>${t('done.col.set')}</th><th>${t('done.col.target')}</th><th>${t('done.col.done')}</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
   } else {
