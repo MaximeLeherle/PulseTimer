@@ -380,9 +380,9 @@ header h1 {
 /* ========== TOAST ========== */
 .toast {
   position: fixed;
-  bottom: 30px;
+  bottom: -100px;
   left: 50%;
-  transform: translateX(-50%) translateY(120%);
+  transform: translateX(-50%);
   background: var(--panel);
   border: 1px solid var(--accent);
   color: var(--text);
@@ -390,12 +390,12 @@ header h1 {
   border-radius: 10px;
   font-size: 13px;
   z-index: 1000;
-  transition: transform 0.3s ease;
+  transition: bottom 0.3s ease;
   max-width: 90vw;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show { bottom: 30px; }
 
 /* ========== HINT ========== */
 .hint {
