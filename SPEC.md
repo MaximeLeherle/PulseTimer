@@ -388,14 +388,14 @@ Tracked here for the next dev iteration. Items marked **[bug]** affect current b
 
 ### UX Improvements
 
-**[ux] #3 — No "Done" button for free rep phases**  
-In rep-based phases (cap = 0), the only way to end a set is to either hit the tap-counter target (auto-advance) or press "Suivant" in the footer. There is no explicit large "TERMINÉ" / "Série faite" button. Adding one as a primary CTA above the footer would be much clearer.
+~~**[ux] #3 — No "Done" button for free rep phases**~~  
+✅ Fixed — `#done-phase-btn` ("✓ SÉRIE FAITE") added inside `#tap-zone`; visible only in free phases (cap = 0), calls `onPhaseEnd()`.
 
-**[ux] #4 — No "Skip rest" from the active timer screen**  
-The "Passer le repos" button only appears on the rep entry screen. During a live rest countdown, there is no way to skip it. A "Passer" button in the footer (or the "Suivant" button repurposed) during rest phases would solve this.
+~~**[ux] #4 — No "Skip rest" from the active timer screen**~~  
+✅ Fixed — "SUIVANT" button relabelled "⏭ PASSER" during rest phases, reverts to "⏭ SUIVANT" when work resumes.
 
-**[ux] #5 — Series tracker overflows on many rounds**  
-At 10+ sets (pyramid 1→10 = 19 bubbles, random 20 sets), the bubble row wraps and becomes unreadable. Fix: above 8 rounds, replace the bubble row with a compact text indicator `4 / 19` and show a mini linear progress bar instead.
+~~**[ux] #5 — Series tracker overflows on many rounds**~~  
+✅ Fixed — above 8 rounds: compact `N / total` + mini progress bar replaces the bubble row.
 
 **[ux] #6 — Tap counter lacks visual feedback**  
 A tap on `#tap-btn` only increments the number. On mobile without vibration enabled, the user has no strong confirmation. Fix: add a brief scale-pulse CSS animation on each tap (`.tap-btn:active` → `transform: scale(0.92)` already exists but needs a post-release spring animation).
@@ -429,7 +429,7 @@ The logic supports `duration = 0` for Sprint (tap counter, no timer) but the UI 
 - [x] Session summary with per-set breakdown table
 - [x] **Step 1:** Refactor monolith → ES6 modules (`scripts/` + `styles/`)
 - [x] **Step 2:** Fix known bugs (#1 Sprint rep entry, #2 EMOM logic)
-- [ ] **Step 3:** UX improvements (#3 Done button, #4 Skip rest in timer, #5 tracker overflow)
+- [x] **Step 3:** UX improvements (#3 Done button, #4 Skip rest in timer, #5 tracker overflow)
 - [ ] **Step 4:** PWA — `manifest.json` + icons + self-hosted fonts (#9, #10)
 - [ ] **Step 5:** Accessibility audit + keyboard shortcuts
 - [ ] **Step 6:** CHANGELOG, LICENSE

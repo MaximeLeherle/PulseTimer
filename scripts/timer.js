@@ -91,6 +91,7 @@ function startWorkPhase() {
     tgEl.innerHTML = 'LIBRE';
   }
 
+  document.getElementById('next-btn').textContent = '⏭ SUIVANT';
   setCircle(0, 'normal');
   buildSeriesTracker();
   sounds.go();
@@ -118,6 +119,7 @@ function startRestPhase() {
 
   document.getElementById('tap-zone').style.display             = 'none';
   document.getElementById('progress-circle-wrap').style.display = '';
+  document.getElementById('next-btn').textContent    = '⏭ PASSER';
   document.getElementById('timer-phase').textContent = 'REPOS';
   document.getElementById('timer-phase').className   = 'timer-phase rest';
   document.getElementById('big-time').className      = 'big-time rest';
@@ -340,6 +342,11 @@ export function initTimer() {
     if (state.tapCount <= 0) return;
     state.tapCount--;
     document.getElementById('tap-count').textContent = state.tapCount;
+  });
+
+  document.getElementById('done-phase-btn').addEventListener('click', () => {
+    if (!state.running || state.paused || state.phase !== 'work') return;
+    onPhaseEnd();
   });
 
   document.getElementById('input-validate-btn').addEventListener('click', () => validateInput(false));

@@ -218,6 +218,24 @@
   letter-spacing: 1px;
 }
 #tap-undo-wrap { margin-top: 14px; }
+#done-phase-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 18px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+#done-phase-btn:hover  { opacity: 0.88; }
+#done-phase-btn:active { opacity: 0.75; }
 #tap-undo-btn {
   background: transparent;
   border: 1px solid var(--line);
@@ -229,6 +247,47 @@
   font-size: 13px;
 }
 #tap-undo-btn:hover { border-color: var(--warn); color: var(--warn); }
+
+/* ========== COMPACT TRACKER (> 8 rounds) ========== */
+.tracker-compact {
+  width: 100%;
+  max-width: 480px;
+}
+.tracker-compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.tracker-compact-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 2px;
+}
+.tracker-compact-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--accent);
+  line-height: 1;
+}
+.tracker-compact-total {
+  font-size: 16px;
+  color: var(--muted);
+}
+.tracker-mini-bar {
+  height: 6px;
+  background: var(--panel);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.tracker-mini-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
 
 /* ========== TIMER FOOTER ========== */
 .timer-footer {

@@ -14,6 +14,23 @@ export function buildSeriesTracker() {
   const wrap = document.getElementById('series-tracker');
   wrap.innerHTML = '';
   if (state.totalRounds <= 1) return;
+
+  if (state.totalRounds > 8) {
+    const done = state.roundCounts.length;
+    const pct  = Math.round((done / state.totalRounds) * 100);
+    wrap.innerHTML = `
+      <div class="tracker-compact">
+        <div class="tracker-compact-header">
+          <span class="tracker-compact-label">SÉRIE</span>
+          <span class="tracker-compact-num">${state.currentRound}<span class="tracker-compact-total"> / ${state.totalRounds}</span></span>
+        </div>
+        <div class="tracker-mini-bar">
+          <div class="tracker-mini-fill" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+    return;
+  }
+
   for (let i = 0; i < state.totalRounds; i++) {
     const dot    = document.createElement('div');
     dot.className = 'series-bubble';
