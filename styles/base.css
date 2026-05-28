@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:           #0a0a0a;
+  --panel:        #141414;
+  --panel-2:      #1c1c1c;
+  --line:         #252525;
+  --text:         #f0f0f0;
+  --muted:        #555555;
+  --accent:       #ffffff;
+  --accent-soft:  rgba(255, 255, 255, 0.06);
+  --accent-2:     #aaaaaa;
+  --warn:         #d94f3a;
+  --rest:         #888888;
+  --ok:           #5cb87a;
+  --over:         #c88840;
+}
+body.light {
+  --bg:           #fafafa;
+  --panel:        #ffffff;
+  --panel-2:      #f2f2f2;
+  --line:         #e8e8e8;
+  --text:         #0a0a0a;
+  --muted:        #888888;
+  --accent:       #0a0a0a;
+  --accent-soft:  rgba(0, 0, 0, 0.05);
+  --accent-2:     #444444;
+  --warn:         #c84020;
+  --rest:         #555555;
+  --ok:           #2a7a50;
+  --over:         #9a6820;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  min-height: 100vh;
+  padding: 20px;
+  padding-bottom: 60px;
+  transition: background 0.3s, color 0.3s;
+}
+.container { max-width: 720px; margin: 0 auto; }

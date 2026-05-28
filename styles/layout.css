@@ -1,0 +1,263 @@
+/* ========== FULL-SCREEN OVERLAYS ========== */
+.full-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+.full-screen.active { display: flex; }
+
+/* ========== TIMER HEADER ========== */
+.timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.timer-phase {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--accent);
+}
+.timer-phase.rest      { color: var(--rest); }
+.timer-phase.countdown { color: var(--warn); }
+.timer-phase.done      { color: var(--ok); }
+.timer-exercise {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+/* ========== TIMER MAIN ========== */
+.timer-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+}
+
+/* ========== PROGRESS CIRCLE ========== */
+.progress-circle-wrap {
+  position: relative;
+  width: min(80vw, 360px);
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.progress-circle {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.progress-circle .track {
+  fill: none;
+  stroke: var(--panel);
+  stroke-width: 6;
+}
+.progress-circle .bar {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear, stroke 0.3s;
+}
+.progress-circle .bar.rest { stroke: var(--rest); }
+.progress-circle .bar.warn { stroke: var(--warn); }
+
+.circle-content {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+.big-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: clamp(72px, 18vw, 130px);
+  line-height: 0.9;
+  color: var(--text);
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+.big-time.warn { color: var(--warn); animation: pulse 0.5s infinite alternate; }
+.big-time.rest { color: var(--rest); }
+.big-time.countdown {
+  color: var(--warn);
+  font-size: clamp(120px, 28vw, 200px);
+}
+.effort-target {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.effort-target strong { color: var(--accent); font-size: 28px; }
+
+@keyframes pulse {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0.7; transform: scale(1.03); }
+}
+
+/* ========== TOTAL BAR ========== */
+.total-bar-wrap { width: 100%; max-width: 480px; }
+.total-bar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+}
+.total-bar-header strong { color: var(--accent); font-weight: 600; }
+.total-bar {
+  height: 10px;
+  background: var(--panel);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.total-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(.4, 1, .4, 1);
+}
+
+/* ========== SERIES TRACKER ========== */
+.series-tracker {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 480px;
+}
+.series-bubble {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 16px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+}
+.series-bubble.done {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.series-bubble.over {
+  background: rgba(255, 177, 58, 0.15);
+  border-color: var(--over);
+  color: var(--over);
+}
+.series-bubble.under {
+  background: rgba(255, 94, 58, 0.1);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.series-bubble.current {
+  border-color: var(--accent);
+  color: var(--accent);
+  animation: pulse 0.8s infinite alternate;
+}
+
+/* ========== TAP COUNTER ========== */
+#tap-btn {
+  width: min(72vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--line);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.08s, border-color 0.1s;
+  gap: 4px;
+  margin: 0 auto;
+}
+#tap-btn:active { transform: scale(0.94); border-color: var(--accent); }
+#tap-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: clamp(56px, 14vw, 100px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+#tap-target-hint {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+#tap-undo-wrap { margin-top: 14px; }
+#tap-undo-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 8px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+}
+#tap-undo-btn:hover { border-color: var(--warn); color: var(--warn); }
+
+/* ========== TIMER FOOTER ========== */
+.timer-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.timer-footer button {
+  padding: 18px 12px;
+  min-height: 56px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.timer-footer button:hover  { opacity: 0.75; }
+.timer-footer button.danger { border-color: var(--warn); color: var(--warn); }
+.timer-footer button.primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
